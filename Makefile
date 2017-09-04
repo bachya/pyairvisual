@@ -1,11 +1,12 @@
 ci:
 	pipenv run py.test --junitxml=report.xml
 coverage:
-	pipenv run py.test -s --verbose --cov-report term-missing --cov-report xml --cov=pyden tests
+	pipenv run py.test -s --verbose --cov-report term-missing --cov-report xml --cov=pyairvisual tests
 docs:
 	cd docs && make html
-flake8:
-	pipenv run flake8 pyden
+style:
+	pipenv run flake8 pyairvisual
+	pipenv run pydocstyle pyairvisual
 init:
 	pip install --upgrade pip pipenv
 	pipenv lock

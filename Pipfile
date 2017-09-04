@@ -12,7 +12,8 @@ pytest-cov = "*"
 requests-mock = "*"
 tox = "*"
 twine = "*"
-Sphinx = "*"
+sphinx = "*"
+pydocstyle = "*"
 
 [packages]
 requests = "*"
