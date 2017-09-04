@@ -12,7 +12,6 @@ lint:
 	pipenv run flake8 pyairvisual
 	pipenv run pydocstyle pyairvisual
 publish:
-	python setup.py publish
-	rm -rf dist/ build/ .egg pyden.egg-info/
+	pipenv run python setup.py publish
 test:
 	pipenv run detox

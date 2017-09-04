@@ -3,3 +3,6 @@
 .coverage
 coverage.xml
 report.xml
+build/
+dist/
+*.egg-info/
