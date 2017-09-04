@@ -1,0 +1,150 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "0f7703c61337f98c3707cc72679b7c93cf4d61ed2915bd6c44cf90f09cd76e5d"
+        },
+        "requires": {},
+        "sources": [
+            {
+                "url": "https://pypi.python.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "certifi": {
+            "version": "==2017.7.27.1"
+        },
+        "chardet": {
+            "version": "==3.0.4"
+        },
+        "idna": {
+            "version": "==2.6"
+        },
+        "requests": {
+            "version": "==2.18.4"
+        },
+        "urllib3": {
+            "version": "==1.22"
+        }
+    },
+    "develop": {
+        "alabaster": {
+            "version": "==0.7.10"
+        },
+        "babel": {
+            "version": "==2.5.0"
+        },
+        "certifi": {
+            "version": "==2017.7.27.1"
+        },
+        "chardet": {
+            "version": "==3.0.4"
+        },
+        "codecov": {
+            "version": "==2.0.9"
+        },
+        "coverage": {
+            "version": "==4.4.1"
+        },
+        "detox": {
+            "version": "==0.11"
+        },
+        "docutils": {
+            "version": "==0.14"
+        },
+        "enum-compat": {
+            "version": "==0.0.2"
+        },
+        "eventlet": {
+            "version": "==0.21.0"
+        },
+        "flake8": {
+            "version": "==3.4.1"
+        },
+        "greenlet": {
+            "version": "==0.4.12"
+        },
+        "idna": {
+            "version": "==2.6"
+        },
+        "imagesize": {
+            "version": "==0.7.1"
+        },
+        "jinja2": {
+            "version": "==2.9.6"
+        },
+        "markupsafe": {
+            "version": "==1.0"
+        },
+        "mccabe": {
+            "version": "==0.6.1"
+        },
+        "pkginfo": {
+            "version": "==1.4.1"
+        },
+        "pluggy": {
+            "version": "==0.5.1"
+        },
+        "py": {
+            "version": "==1.4.34"
+        },
+        "pycodestyle": {
+            "version": "==2.3.1"
+        },
+        "pyflakes": {
+            "version": "==1.5.0"
+        },
+        "pygments": {
+            "version": "==2.2.0"
+        },
+        "pytest": {
+            "version": "==3.2.1"
+        },
+        "pytest-cov": {
+            "version": "==2.5.1"
+        },
+        "pytz": {
+            "version": "==2017.2"
+        },
+        "requests": {
+            "version": "==2.18.4"
+        },
+        "requests-mock": {
+            "version": "==1.3.0"
+        },
+        "requests-toolbelt": {
+            "version": "==0.8.0"
+        },
+        "setuptools": {
+            "version": "==36.4.0"
+        },
+        "six": {
+            "version": "==1.10.0"
+        },
+        "snowballstemmer": {
+            "version": "==1.2.1"
+        },
+        "sphinx": {
+            "version": "==1.6.3"
+        },
+        "sphinxcontrib-websupport": {
+            "version": "==1.0.1"
+        },
+        "tox": {
+            "version": "==2.8.1"
+        },
+        "tqdm": {
+            "version": "==4.15.0"
+        },
+        "twine": {
+            "version": "==1.9.1"
+        },
+        "urllib3": {
+            "version": "==1.22"
+        },
+        "virtualenv": {
+            "version": "==15.1.0"
+        }
+    }
+}
