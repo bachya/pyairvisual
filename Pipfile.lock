@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0f7703c61337f98c3707cc72679b7c93cf4d61ed2915bd6c44cf90f09cd76e5d"
+            "sha256": "869a05af76dcb68f6d666fa40e9c0afa65eb2b9badb408926b577da1decf5a6b"
         },
         "requires": {},
         "sources": [
@@ -44,6 +44,9 @@
         "codecov": {
             "version": "==2.0.9"
         },
+        "configparser": {
+            "version": "==3.5.0"
+        },
         "coverage": {
             "version": "==4.4.1"
         },
@@ -55,6 +58,9 @@
         },
         "enum-compat": {
             "version": "==0.0.2"
+        },
+        "enum34": {
+            "version": "==1.1.6"
         },
         "eventlet": {
             "version": "==0.21.0"
@@ -91,6 +97,9 @@
         },
         "pycodestyle": {
             "version": "==2.3.1"
+        },
+        "pydocstyle": {
+            "version": "==2.0.0"
         },
         "pyflakes": {
             "version": "==1.5.0"
@@ -139,6 +148,9 @@
         },
         "twine": {
             "version": "==1.9.1"
+        },
+        "typing": {
+            "version": "==3.6.2"
         },
         "urllib3": {
             "version": "==1.22"
