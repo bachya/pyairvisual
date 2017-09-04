@@ -1,23 +1,23 @@
-pyden: data from the City and County of Denver, CO
-==================================================
+pyairvisual: a thin Python wrapper for AirVisual
+================================================
 
-.. image:: https://travis-ci.org/bachya/pyden.svg?branch=master
-  :target: https://travis-ci.org/bachya/pyden
+.. image:: https://travis-ci.org/bachya/pyairvisual.svg?branch=master
+  :target: https://travis-ci.org/bachya/pyairvisual
 
-.. image:: https://img.shields.io/pypi/v/pyden.svg
-  :target: https://pypi.python.org/pypi/pyden
+.. image:: https://img.shields.io/pypi/v/pyairvisual.svg
+  :target: https://pypi.python.org/pypi/pyairvisual
 
-.. image:: https://img.shields.io/pypi/pyversions/pyden.svg
-  :target: https://pypi.python.org/pypi/pyden
+.. image:: https://img.shields.io/pypi/pyversions/pyairvisual.svg
+  :target: https://pypi.python.org/pypi/pyairvisual
 
-.. image:: https://img.shields.io/pypi/l/pyden.svg
-  :target: https://github.com/bachya/pyden/blob/master/LICENSE
+.. image:: https://img.shields.io/pypi/l/pyairvisual.svg
+  :target: https://github.com/bachya/pyairvisual/blob/master/LICENSE
 
-.. image:: https://codecov.io/gh/bachya/pyden/branch/master/graph/badge.svg
-  :target: https://codecov.io/gh/bachya/pyden
+.. image:: https://codecov.io/gh/bachya/pyairvisual/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/bachya/pyairvisual
 
-.. image:: https://img.shields.io/codeclimate/github/bachya/pyden.svg
-  :target: https://codeclimate.com/github/bachya/pyden
+.. image:: https://img.shields.io/codeclimate/github/bachya/pyairvisual.svg
+  :target: https://codeclimate.com/github/bachya/pyairvisual
 
 .. image:: https://img.shields.io/badge/SayThanks-!-1EAEDB.svg
   :target: https://saythanks.io/to/bachya
