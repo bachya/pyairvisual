@@ -1,7 +1,5 @@
 *.pyc
 .cache
-.coverage
-coverage.xml
 report.xml
 build/
 dist/
