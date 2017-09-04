@@ -1,5 +1,5 @@
-pyairvisual: a thin Python wrapper for AirVisual
-================================================
+pyairvisual: a thin Python wrapper for the AirVisual© API
+=========================================================
 
 .. image:: https://travis-ci.org/bachya/pyairvisual.svg?branch=master
   :target: https://travis-ci.org/bachya/pyairvisual
