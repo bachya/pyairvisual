@@ -1,32 +1,55 @@
-"""Define an AirVisual client."""
+"""Define a client to interact with AirVisual."""
+from aiohttp import ClientSession, client_exceptions
 
-import pyairvisual.api as api
+from .data import Data
+from .errors import RequestError, raise_error
+from .supported import Supported
+
+API_URL_SCAFFOLD = 'https://api.airvisual.com/v2'
 
 
-class Client(api.BaseAPI):
-    """Define an AirVisual API client."""
+class Client(object):
+    """Define the client."""
 
-    def __init__(self, api_key):
+    def __init__(self, api_key: str, websession: ClientSession) -> None:
         """Initialize."""
         self._api_key = api_key
-        super(Client, self).__init__()
+        self.websession = websession
 
-    @property
-    def api_key(self):
-        """Define a property for the AirVisual API key."""
-        return self._api_key
+        self.data = Data(self.request)
+        self.supported = Supported(self.request)
 
-    def city(self, city, state, country):
-        """Retrieve pollution data for specific city."""
-        return self.get(
-            'city', params={'city': city,
-                            'state': state,
-                            'country': country}).json()
+    async def request(
+            self,
+            method: str,
+            endpoint: str,
+            *,
+            headers: dict = None,
+            params: dict = None,
+            json: dict = None) -> dict:
+        """Make a request against AirVisual."""
+        if not headers:
+            headers = {}
+        headers.update({'Content-Type': 'application/json'})
 
-    def nearest_city(self, latitude, longitude, radius=1000):
-        """Retrieve pollution data for city nearest to a lat/long/radius."""
-        return self.get(
-            'nearest_city',
-            params={'lat': latitude,
-                    'lon': longitude,
-                    'rad': radius}).json()
+        if not params:
+            params = {}
+        params.update({'key': self._api_key})
+
+        try:
+            async with self.websession.request(
+                    method, '{0}/{1}'.format(API_URL_SCAFFOLD, endpoint),
+                    headers=headers, params=params, json=json) as resp:
+                data = await resp.json()
+                _raise_on_error(data)
+                return data
+        except client_exceptions.ClientError as err:
+            raise RequestError('An error occurred: {0}'.format(err)) from None
+
+
+def _raise_on_error(data: dict) -> None:
+    """Raise the appropriate exception on error."""
+    if data['status'] == 'success':
+        return
+
+    raise_error(data['data']['message'])
