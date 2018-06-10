@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# pylint: disable=exec-used,invalid-name,missing-docstring
+"""Define publication options."""
 
 # Note: To use the 'upload' functionality of this file, you must:
 #   $ pip install twine
@@ -15,53 +15,66 @@ from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = 'pyairvisual'
-DESCRIPTION = 'A thin wrapper around the AirVisual API'
+DESCRIPTION = 'A simple API for AirVisual air quality data'
 URL = 'https://github.com/bachya/pyairvisual'
 EMAIL = 'bachya1208@gmail.com'
 AUTHOR = 'Aaron Bach'
+REQUIRES_PYTHON = '>=3.5.0'
+VERSION = None
 
 # What packages are required for this module to be executed?
-REQUIRED = ['requests']
+REQUIRED = [  # type: ignore
+    'aiodns',
+    'aiohttp'
+]
 
 # The rest you shouldn't have to touch too much :)
 # ------------------------------------------------
 # Except, perhaps the License and Trove Classifiers!
+# If you do change the License, remember to change the Trove Classifier for
+# that!
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 # Import the README and use it as the long-description.
-# Note: this will only work if 'README.rst' is present in your MANIFEST.in file
+# Note: this will only work if 'README.md' is present in your MANIFEST.in file!
 with io.open(os.path.join(HERE, 'README.rst'), encoding='utf-8') as f:
-    LONG_DESCRIPTION = '\n' + f.read()
+    LONG_DESC = '\n' + f.read()
 
 # Load the package's __version__.py module as a dictionary.
-ABOUT = {}
-with open(os.path.join(HERE, NAME, '__version__.py')) as f:
-    exec(f.read(), ABOUT)
+ABOUT = {}  # type: ignore
+if not VERSION:
+    with open(os.path.join(HERE, NAME, '__version__.py')) as f:
+        exec(f.read(), ABOUT)  # pylint: disable=exec-used
+else:
+    ABOUT['__version__'] = VERSION
 
 
-class PublishCommand(Command):
-    """Support setup.py publish."""
+class UploadCommand(Command):
+    """Support setup.py upload."""
 
     description = 'Build and publish the package.'
-    user_options = []
+    user_options = []  # type: ignore
 
     @staticmethod
-    def status(s):
+    def status(string):
         """Prints things in bold."""
-        print('\033[1m{0}\033[0m'.format(s))
+        print('\033[1m{0}\033[0m'.format(string))
 
     def initialize_options(self):
+        """Add options for initialization."""
         pass
 
     def finalize_options(self):
+        """Add options for finalization."""
         pass
 
     def run(self):
+        """Run."""
         try:
             self.status('Removing previous builds…')
             rmtree(os.path.join(HERE, 'dist'))
-        except FileNotFoundError:
+        except OSError:
             pass
 
         self.status('Building Source and Wheel (universal) distribution…')
@@ -71,6 +84,10 @@ class PublishCommand(Command):
         self.status('Uploading the package to PyPi via Twine…')
         os.system('twine upload dist/*')
 
+        self.status('Pushing git tags…')
+        os.system('git tag v{0}'.format(ABOUT['__version__']))
+        os.system('git push --tags')
+
         sys.exit()
 
 
@@ -79,11 +96,13 @@ setup(
     name=NAME,
     version=ABOUT['__version__'],
     description=DESCRIPTION,
-    long_description=LONG_DESCRIPTION,
+    long_description=LONG_DESC,
+    long_description_content_type='text/markdown',
     author=AUTHOR,
     author_email=EMAIL,
+    python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages(exclude=('tests', )),
+    packages=find_packages(exclude=('tests',)),
     # If your package is a single module, use this instead of 'packages':
     # py_modules=['mypackage'],
 
@@ -99,8 +118,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
@@ -108,5 +125,6 @@ setup(
     ],
     # $ setup.py publish support.
     cmdclass={
-        'publish': PublishCommand,
-    }, )
+        'upload': UploadCommand,
+    },
+)
