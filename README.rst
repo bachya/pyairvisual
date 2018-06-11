@@ -40,14 +40,14 @@ Version 1.0.0 of pyairvisual makes several breaking, but necessary changes:
 If you wish to continue using the previous, synchronous version of
 pyairvisual, make sure to pin version 1.0.0.
 
-💧 Installation
+☀️ Installation
 ===============
 
 .. code-block:: bash
 
   $ pip install pyairvisual
 
-💧 Example
+☀️ Example
 ==========
 
 pyairvisual starts within an
@@ -118,7 +118,7 @@ Then, get to work:
 Check out `example.py`, the tests, and the source files themselves for method
 signatures and more examples.
 
-💧 Contributing
+☀️ Contributing
 ===============
 
 #. `Check for open features/bugs <https://github.com/bachya/regenmaschine/issues>`_
