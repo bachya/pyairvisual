@@ -4,3 +4,4 @@ report.xml
 build/
 dist/
 *.egg-info/
+.mypy_cache
