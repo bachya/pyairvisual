@@ -1,5 +1,5 @@
 ☀️ pyairvisual: a thin Python wrapper for the AirVisual© API
-===========================================================
+###########################################################
 
 .. image:: https://travis-ci.org/bachya/pyairvisual.svg?branch=master
   :target: https://travis-ci.org/bachya/pyairvisual
@@ -27,7 +27,7 @@ pyairvisual is a simple, clean, well-tested library for interacting with
 `AirVisual <https://www.airvisual.com/>`_ to retrieve air quality information.
 
 ☀️ PLEASE READ: 1.0.0 and Beyond
-================================
+################################
 
 Version 1.0.0 of pyairvisual makes several breaking, but necessary changes:
 
@@ -41,14 +41,50 @@ If you wish to continue using the previous, synchronous version of
 pyairvisual, make sure to pin version 1.0.0.
 
 ☀️ Installation
-===============
+###############
 
 .. code-block:: bash
 
   $ pip install pyairvisual
 
+☀️ API Key
+#########
+
+You can get an AirVisual API key from
+`the AirVisual API site <https://www.airvisual.com/user/api>`_. Depending on
+the plan you choose, more functionality will be available from the API:
+
+Community
+*********
+
+The Community Plan gives access to:
+
+* List supported countries
+* List supported states
+* List supported cities
+* Get data from the nearest city based on IP address
+* Get data from the nearest city based on latitude/longitude
+* Get data from a specific city
+
+Startup
+*******
+
+The Startup Plan gives access to:
+
+* List supported stations in a city
+* Get data from the nearest station based on IP address
+* Get data from the nearest station based on latitude/longitude
+* Get data from a specific station
+
+Enterprise
+**********
+
+The Enterprise Plan gives access to:
+
+* Get a global city ranking of air quality
+
 ☀️ Example
-==========
+##########
 
 pyairvisual starts within an
 `aiohttp <https://aiohttp.readthedocs.io/en/stable/>`_ :code:`ClientSession`:
@@ -107,7 +143,7 @@ Then, get to work:
       country='China')
 
   # With the appropriate API key, you can get an air quality ranking:
-  data = client.data.ranking()
+  data = await client.data.ranking()
 
   # Lastly, pyairvisual gives you several methods to look locations up:
   countries = await client.supported.countries()
@@ -119,7 +155,7 @@ Check out `example.py`, the tests, and the source files themselves for method
 signatures and more examples.
 
 ☀️ Contributing
-===============
+###############
 
 #. `Check for open features/bugs <https://github.com/bachya/regenmaschine/issues>`_
    or `initiate a discussion on one <https://github.com/bachya/regenmaschine/issues/new>`_.
