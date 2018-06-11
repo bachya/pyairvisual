@@ -1,7 +1,0 @@
-[
-  "tests/test_client.py::test_create",
-  "tests/test_data.py::test_endpoints",
-  "tests/test_errors.py::test_api_key_expired",
-  "tests/test_errors.py::test_generic_error",
-  "tests/test_supported.py::test_endpoints"
-]
