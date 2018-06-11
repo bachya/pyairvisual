@@ -26,6 +26,11 @@ class NoStationError(AirVisualError):
     pass
 
 
+class NotFoundError(AirVisualError):
+    """Define an error for when a city cannot be found."""
+    pass
+
+
 class RequestError(AirVisualError):
     """Define an error related to invalid requests."""
     pass
@@ -39,6 +44,7 @@ class UnauthorizedError(AirVisualError):
 ERROR_CODES = {
     'api_key_expired': KeyExpiredError,
     'call_limit_reached': LimitReachedError,
+    'city_not_found': NotFoundError,
     'incorrect_api_key': InvalidKeyError,
     'no_nearest_station': NoStationError,
     'permission_denied': UnauthorizedError,
