@@ -1,5 +1,5 @@
 """Define a client to interact with AirVisual."""
-from aiohttp import ClientSession, client_exceptions
+import aiohttp
 
 from .data import Data
 from .errors import RequestError, raise_error
@@ -11,7 +11,8 @@ API_URL_SCAFFOLD = 'https://api.airvisual.com/v2'
 class Client(object):
     """Define the client."""
 
-    def __init__(self, api_key: str, websession: ClientSession) -> None:
+    def __init__(
+            self, api_key: str, websession: aiohttp.ClientSession) -> None:
         """Initialize."""
         self._api_key = api_key
         self.websession = websession
@@ -36,18 +37,15 @@ class Client(object):
             params = {}
         params.update({'key': self._api_key})
 
-        try:
-            async with self.websession.request(
-                    method, '{0}/{1}'.format(API_URL_SCAFFOLD, endpoint),
-                    headers=headers, params=params, json=json) as resp:
-                data = await resp.json()
-                _raise_on_error(data)
-                return data
-        except client_exceptions.ClientError as err:
-            raise RequestError('An error occurred: {0}'.format(err)) from None
+        url = '{0}/{1}'.format(API_URL_SCAFFOLD, endpoint)
+        async with self.websession.request(method, url, headers=headers,
+                                           params=params, json=json) as resp:
+            data = await resp.json(content_type=None)
+            _raise_on_error(data)
+            return data
 
 
-def _raise_on_error(data: dict) -> None:
+def _raise_on_error(data: aiohttp.ClientResponse) -> None:
     """Raise the appropriate exception on error."""
     if data['status'] == 'success':
         return

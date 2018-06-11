@@ -38,4 +38,4 @@ class Supported(object):
                 'state': state,
                 'country': country
             })
-        return [d['state'] for d in data['data']]
+        return [station for station in data['data']]

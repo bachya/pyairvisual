@@ -14,7 +14,7 @@ class Data(object):
             kind: str,
             latitude: Union[float, str] = None,
             longitude: Union[float, str] = None) -> dict:
-        """Return data from nearest city/station to this machine's IP."""
+        """Return data from nearest city/station (IP or coordinates)."""
         params = {}
         if latitude and longitude:
             params.update({'lat': str(latitude), 'lon': str(longitude)})
@@ -39,14 +39,14 @@ class Data(object):
             self,
             latitude: Union[float, str] = None,
             longitude: Union[float, str] = None) -> dict:
-        """Return data from nearest city to this machine's IP."""
+        """Return data from nearest city (IP or coordinates)."""
         return await self._nearest('city', latitude, longitude)
 
     async def nearest_station(
             self,
             latitude: Union[float, str] = None,
             longitude: Union[float, str] = None) -> dict:
-        """Return data from nearest location to this machine's IP."""
+        """Return data from nearest station (IP or coordinates)."""
         return await self._nearest('station', latitude, longitude)
 
     async def ranking(self) -> dict:
