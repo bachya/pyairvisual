@@ -3,4 +3,3 @@ source = pyairvisual
 
 omit =
     pyairvisual/__version__.py
-
