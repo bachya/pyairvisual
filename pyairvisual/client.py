@@ -2,13 +2,13 @@
 import aiohttp
 
 from .data import Data
-from .errors import RequestError, raise_error
+from .errors import raise_error
 from .supported import Supported
 
 API_URL_SCAFFOLD = 'https://api.airvisual.com/v2'
 
 
-class Client(object):
+class Client(object):  # pylint: disable=too-few-public-methods
     """Define the client."""
 
     def __init__(

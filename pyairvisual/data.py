@@ -1,11 +1,11 @@
 """Define a series of endpoints for pollution data."""
-from typing import Union
+from typing import Awaitable, Callable, Union
 
 
 class Data(object):
     """Define the "Data" endpoint group."""
 
-    def __init__(self, request):
+    def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:
         """Iniitialize."""
         self._request = request
 

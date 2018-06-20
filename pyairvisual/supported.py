@@ -1,10 +1,11 @@
 """Define a series of endpoints for what locations are supported."""
+from typing import Awaitable, Callable
 
 
 class Supported(object):
     """Define the "Supported" endpoint group."""
 
-    def __init__(self, request):
+    def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:
         """Iniitialize."""
         self._request = request
 
