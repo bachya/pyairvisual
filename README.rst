@@ -114,7 +114,7 @@ Create a client:
 
 .. code-block:: python
 
-  client = Client('<YOUR AIRVISUAL API KEY>')
+  client = Client('<YOUR AIRVISUAL API KEY>', websession)
 
 Then, get to work:
 
