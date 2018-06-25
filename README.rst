@@ -26,7 +26,7 @@
 pyairvisual is a simple, clean, well-tested library for interacting with
 `AirVisual <https://www.airvisual.com/>`_ to retrieve air quality information.
 
-☀️ PLEASE READ: 1.0.0 and Beyond
+☀️ PLEASE READ: 2.0.0 and Beyond
 ################################
 
 Version 1.0.0 of pyairvisual makes several breaking, but necessary changes:
