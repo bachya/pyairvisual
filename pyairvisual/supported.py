@@ -2,7 +2,7 @@
 from typing import Awaitable, Callable
 
 
-class Supported(object):
+class Supported:
     """Define the "Supported" endpoint group."""
 
     def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:

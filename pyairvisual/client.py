@@ -8,7 +8,7 @@ from .supported import Supported
 API_URL_SCAFFOLD = 'https://api.airvisual.com/v2'
 
 
-class Client(object):  # pylint: disable=too-few-public-methods
+class Client:  # pylint: disable=too-few-public-methods
     """Define the client."""
 
     def __init__(
@@ -45,7 +45,7 @@ class Client(object):  # pylint: disable=too-few-public-methods
             return data
 
 
-def _raise_on_error(data: aiohttp.ClientResponse) -> None:
+def _raise_on_error(data: dict) -> None:
     """Raise the appropriate exception on error."""
     if data['status'] == 'success':
         return
