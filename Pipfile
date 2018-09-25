@@ -5,8 +5,6 @@ verify_ssl = true
 [dev-packages]
 "flake8" = "*"
 aresponses = "*"
-codecov = "*"
-coverage = "*"
 detox = "*"
 mypy = "*"
 pydocstyle = "*"
