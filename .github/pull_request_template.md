@@ -2,7 +2,7 @@
 
 **Does this fix a specific issue?**
 
-Fixes https://github.com/bachya/python-simplisafe/issues/<ISSUE ID>
+Fixes https://github.com/bachya/pyairvisual/issues/<ISSUE ID>
   
 **Checklist:**
 
