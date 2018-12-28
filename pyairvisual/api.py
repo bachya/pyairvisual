@@ -2,7 +2,7 @@
 from typing import Awaitable, Callable, Union
 
 
-class Data:
+class API:
     """Define the "Data" endpoint group."""
 
     def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:

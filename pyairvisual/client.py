@@ -1,7 +1,7 @@
 """Define a client to interact with AirVisual."""
 import aiohttp
 
-from .data import Data
+from .api import API
 from .errors import raise_error
 from .supported import Supported
 
@@ -17,7 +17,7 @@ class Client:  # pylint: disable=too-few-public-methods
         self._api_key = api_key
         self.websession = websession
 
-        self.data = Data(self.request)
+        self.api = API(self.request)
         self.supported = Supported(self.request)
 
     async def request(
