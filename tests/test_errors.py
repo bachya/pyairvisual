@@ -34,7 +34,7 @@ async def test_api_key_expired(aresponses, event_loop, fixture_key_expired):
     with pytest.raises(KeyExpiredError):
         async with aiohttp.ClientSession(loop=event_loop) as websession:
             client = Client(TEST_API_KEY, websession)
-            await client.data.nearest_city()
+            await client.api.nearest_city()
 
 
 @pytest.mark.asyncio
@@ -48,4 +48,4 @@ async def test_generic_error(aresponses, event_loop, fixture_generic_error):
     with pytest.raises(AirVisualError):
         async with aiohttp.ClientSession(loop=event_loop) as websession:
             client = Client(TEST_API_KEY, websession)
-            await client.data.nearest_city()
+            await client.api.nearest_city()

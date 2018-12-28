@@ -252,20 +252,20 @@ async def test_endpoints(
     async with aiohttp.ClientSession(loop=event_loop) as websession:
         client = Client(TEST_API_KEY, websession)
 
-        data = await client.data.nearest_city(
+        data = await client.api.nearest_city(
             latitude=TEST_LATITUDE, longitude=TEST_LONGITUDE)
         assert data['city'] == 'Los Angeles'
 
-        data = await client.data.city(TEST_CITY, TEST_STATE, TEST_COUNTRY)
+        data = await client.api.city(TEST_CITY, TEST_STATE, TEST_COUNTRY)
         assert data['city'] == 'Los Angeles'
 
-        data = await client.data.nearest_station(
+        data = await client.api.nearest_station(
             latitude=TEST_LATITUDE, longitude=TEST_LONGITUDE)
         assert data['name'] == 'US Embassy in Beijing'
 
-        data = await client.data.station(
+        data = await client.api.station(
             TEST_STATION_NAME, TEST_CITY, TEST_STATE, TEST_COUNTRY)
         assert data['name'] == 'US Embassy in Beijing'
 
-        data = await client.data.ranking()
+        data = await client.api.ranking()
         assert len(data) == 3
