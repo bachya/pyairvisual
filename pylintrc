@@ -1,4 +1,12 @@
-[SIMILARITIES]
+[MESSAGES CONTROL]
+# Reasons disabled:
+# unnecessary-pass - This can hurt readability
+disable=
+  unnecessary-pass
 
-# Increase this to eliminate false positives:
-min-similarity-lines=6
+[REPORTS]
+reports=no
+
+[FORMAT]
+expected-line-ending-format=LF
+
