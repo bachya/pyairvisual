@@ -1,9 +1,9 @@
-"""Define a series of endpoints for pollution data."""
+"""Define an object to interact with the AirVisual data API."""
 from typing import Awaitable, Callable, Union
 
 
 class API:
-    """Define the "Data" endpoint group."""
+    """Define the "API" endpoint group."""
 
     def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:
         """Iniitialize."""
