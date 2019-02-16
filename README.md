@@ -108,38 +108,43 @@ from pyairvisual import Client
 async def main() -> None:
     """Create the aiohttp session and run the example."""
     async with ClientSession() as websession:
-      client = Client('<YOUR AIRVISUAL API KEY>', websession)
+    # If an API key isn't provided, only Nodes can be queried; everything else
+    # requires an API key:
+    client = Client(websession, api_key='<YOUR AIRVISUAL API KEY>')
 
-      # Get data based on the city nearest to your IP address:
-      data = await client.data.nearest_city()
+    # Get data based on the city nearest to your IP address:
+    data = await client.data.nearest_city()
 
-      # ...or get data based on the city nearest to a latitude/longitude:
-      data = await client.data.nearest_city(
+    # ...or get data based on the city nearest to a latitude/longitude:
+    data = await client.data.nearest_city(
         latitude=39.742599, longitude=-104.9942557)
 
-      # ...or get it explicitly:
-      data = await client.data.city(
+    # ...or get it explicitly:
+    data = await client.data.city(
         city='Los Angeles', state='California', country='USA')
 
-      # If you have the appropriate API key, you can also get data based on
-      # station (nearest or explicit):
-      data = await client.data.nearest_station()
-      data = await client.data.nearest_station(
+    # If you have the appropriate API key, you can also get data based on
+    # station (nearest or explicit):
+    data = await client.data.nearest_station()
+    data = await client.data.nearest_station(
         latitude=39.742599, longitude=-104.9942557)
-      data = await client.data.station(
-          station='US Embassy in Beijing',
-          city='Beijing',
-          state='Beijing',
-          country='China')
+    data = await client.data.station(
+        station='US Embassy in Beijing',
+        city='Beijing',
+        state='Beijing',
+        country='China')
 
-      # With the appropriate API key, you can get an air quality ranking:
-      data = await client.data.ranking()
+    # With the appropriate API key, you can get an air quality ranking:
+    data = await client.data.ranking()
 
-      # Lastly, pyairvisual gives you several methods to look locations up:
-      countries = await client.supported.countries()
-      states = await client.supported.states('USA')
-      cities = await client.supported.cities('USA', 'Colorado')
-      stations = await client.supported.stations('USA', 'Colorado', 'Denver')
+    # pyairvisual gives you several methods to look locations up:
+    countries = await client.supported.countries()
+    states = await client.supported.states('USA')
+    cities = await client.supported.cities('USA', 'Colorado')
+    stations = await client.supported.stations('USA', 'Colorado', 'Denver')
+
+    # AirVisual Nodes can also be queried by ID
+    data = await client.api.node('12345abcdef')
 
 
 asyncio.get_event_loop().run_until_complete(main())
