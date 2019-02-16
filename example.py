@@ -14,7 +14,7 @@ async def main() -> None:  # pylint: disable=too-many-statements
     """Create the aiohttp session and run the example."""
     logging.basicConfig(level=logging.INFO)
     async with ClientSession() as websession:
-        client = Client(websession, api_key='gRwxm3d7QNSZy3toN')
+        client = Client(websession, api_key='<API KEY>')
 
         # Get supported locations (by location):
         try:
