@@ -12,5 +12,5 @@ from .const import TEST_API_KEY
 async def test_create():
     """Test the creation of a client."""
     async with aiohttp.ClientSession() as websession:
-        client = Client(TEST_API_KEY, websession)
+        client = Client(websession, api_key=TEST_API_KEY)
         assert client._api_key == TEST_API_KEY

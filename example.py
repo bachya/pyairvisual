@@ -1,113 +1,90 @@
 """Run an example script to quickly test."""
 import asyncio
+import logging
 
 from aiohttp import ClientSession
 
 from pyairvisual import Client
-from pyairvisual.errors import RequestError, UnauthorizedError
+from pyairvisual.errors import AirVisualError, UnauthorizedError
+
+_LOGGER = logging.getLogger(__name__)
 
 
-async def data(client: Client) -> None:
-    """Output data-related information."""
-    print('DATA FOR CITY CLOSEST TO THIS IP ADDRESS:')
-    info = await client.data.nearest_city()
-    print(info)
-
-    print()
-    print('DATA FOR CITY CLOSEST TO 39.742599,-104.9942557:')
-    info = await client.data.nearest_city(
-        latitude=39.742599, longitude=-104.9942557)
-    print(info)
-
-    print()
-    print('DATA FOR LOS ANGELES:')
-    info = await client.data.city(
-        city='Los Angeles', state='California', country='USA')
-    print(info)
-
-    try:
-        print()
-        print('DATA FOR STATION CLOSEST TO THIS IP ADDRESS:')
-        info = await client.data.nearest_station()
-        print(info)
-    except UnauthorizedError:
-        print("You don't have permission to access this endpoint")
-
-    try:
-        print()
-        print('DATA FOR STATION CLOSEST TO 39.742599,-104.9942557:')
-        info = await client.data.nearest_station(
-            latitude=39.742599, longitude=-104.9942557)
-        print(info)
-    except UnauthorizedError:
-        print("You don't have permission to access this endpoint")
-
-    try:
-        print()
-        print('DATA FOR STATION: US EMBASSY IN BEIJING:')
-        info = await client.data.station(
-            station='US Embassy in Beijing',
-            city='Beijing',
-            state='Beijing',
-            country='China')
-        print(info)
-    except UnauthorizedError:
-        print("You don't have permission to access this endpoint")
-
-    try:
-        print()
-        print('AQI RANKING:')
-        info = await client.data.ranking()
-        print(info)
-    except UnauthorizedError:
-        print("You don't have permission to access this endpoint")
-
-
-async def supported(client: Client) -> None:
-    """Output zone-related information."""
-    print('SUPPORTED COUNTRIES:')
-    countries = await client.supported.countries()
-    print(countries)
-
-    print()
-    print('SUPPORTED STATES IN U.S.A:')
-    states = await client.supported.states('USA')
-    print(states)
-
-    print()
-    print('SUPPORTED CITIES IN COLORADO:')
-    cities = await client.supported.cities('USA', 'Colorado')
-    print(cities)
-
-    try:
-        print()
-        print('SUPPORTED STATIONS IN DENVER:')
-        stations = await client.supported.stations('USA', 'Colorado', 'Denver')
-        print(stations)
-    except UnauthorizedError:
-        print("You don't have permission to access this endpoint")
-
-
-async def main() -> None:
+async def main() -> None:  # pylint: disable=too-many-statements
     """Create the aiohttp session and run the example."""
+    logging.basicConfig(level=logging.INFO)
     async with ClientSession() as websession:
-        await run(websession)
+        client = Client(websession, api_key='gRwxm3d7QNSZy3toN')
 
+        # Get supported locations (by location):
+        try:
+            _LOGGER.info(await client.supported.countries())
+            _LOGGER.info(await client.supported.states('USA'))
+            _LOGGER.info(await client.supported.cities('USA', 'Colorado'))
+        except AirVisualError as err:
+            _LOGGER.error('There was an error: %s', err)
 
-async def run(websession):
-    """Run."""
-    try:
-        # Create a client:
-        client = Client('1234567890abcdefg', websession)
+        # Get supported locations (by station):
+        try:
+            _LOGGER.info(
+                await client.supported.stations(
+                    'USA', 'Colorado', 'Denver'))
+        except UnauthorizedError as err:
+            _LOGGER.error(err)
+        except AirVisualError as err:
+            _LOGGER.error('There was an error: %s', err)
 
-        # Work with supported locations:
-        await supported(client)
+        # Get data by nearest location (by IP):
+        try:
+            _LOGGER.info(await client.api.nearest_city())
+        except AirVisualError as err:
+            _LOGGER.error('There was an error: %s', err)
 
-        # Work with air quality data:
-        print()
-        await data(client)
-    except RequestError as err:
-        print(err)
+        # Get data by nearest location (coordinates or explicit location):
+        try:
+            _LOGGER.info(
+                await client.api.nearest_city(
+                    latitude=39.742599, longitude=-104.9942557))
+            _LOGGER.info(
+                await client.api.city(
+                    city='Los Angeles', state='California', country='USA'))
+        except AirVisualError as err:
+            _LOGGER.error('There was an error: %s', err)
+
+        # Get data by nearest station (by IP):
+        try:
+            _LOGGER.info(await client.api.nearest_station())
+        except UnauthorizedError as err:
+            _LOGGER.error(err)
+        except AirVisualError as err:
+            _LOGGER.error('There was an error: %s', err)
+
+        # Get data by nearest station (by coordinates or explicit location):
+        try:
+            _LOGGER.info(
+                await client.api.nearest_station(
+                    latitude=39.742599, longitude=-104.9942557))
+            _LOGGER.info(
+                await client.api.station(
+                    station='US Embassy in Beijing',
+                    city='Beijing',
+                    state='Beijing',
+                    country='China'))
+        except UnauthorizedError as err:
+            _LOGGER.error(err)
+        except AirVisualError as err:
+            _LOGGER.error('There was an error: %s', err)
+
+        # Get data on AQI ranking:
+        try:
+            _LOGGER.info(await client.api.ranking())
+        except UnauthorizedError as err:
+            _LOGGER.error(err)
+        except AirVisualError as err:
+            _LOGGER.error('There was an error: %s', err)
+
+        # Get info on a AirVisual Pro node:
+        _LOGGER.info(await client.api.node('zEp8CifbnasWtToBc'))
 
 
 asyncio.get_event_loop().run_until_complete(main())

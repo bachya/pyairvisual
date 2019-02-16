@@ -1,18 +1,20 @@
 """Define a client to interact with AirVisual."""
+from typing import Union
+
 import aiohttp
 
 from .api import API
+from .const import API_URL_SCAFFOLD
 from .errors import raise_error
 from .supported import Supported
-
-API_URL_SCAFFOLD = 'https://api.airvisual.com/v2'
 
 
 class Client:  # pylint: disable=too-few-public-methods
     """Define the client."""
 
     def __init__(
-            self, api_key: str, websession: aiohttp.ClientSession) -> None:
+            self, websession: aiohttp.ClientSession, *,
+            api_key: str = None) -> None:
         """Initialize."""
         self._api_key = api_key
         self.websession = websession
@@ -25,6 +27,7 @@ class Client:  # pylint: disable=too-few-public-methods
             method: str,
             endpoint: str,
             *,
+            base_url: str = API_URL_SCAFFOLD,
             headers: dict = None,
             params: dict = None,
             json: dict = None) -> dict:
@@ -35,9 +38,11 @@ class Client:  # pylint: disable=too-few-public-methods
 
         if not params:
             params = {}
-        params.update({'key': self._api_key})
 
-        url = '{0}/{1}'.format(API_URL_SCAFFOLD, endpoint)
+        if self._api_key:
+            params.update({'key': self._api_key})
+
+        url = '{0}/{1}'.format(base_url, endpoint)
         async with self.websession.request(method, url, headers=headers,
                                            params=params, json=json) as resp:
             data = await resp.json(content_type=None)
@@ -45,9 +50,9 @@ class Client:  # pylint: disable=too-few-public-methods
             return data
 
 
-def _raise_on_error(data: dict) -> None:
+def _raise_on_error(data: Union[str, dict]) -> None:
     """Raise the appropriate exception on error."""
-    if data['status'] == 'success':
-        return
-
-    raise_error(data['data']['message'])
+    if isinstance(data, str):
+        raise_error(data)
+    elif 'status' in data and data['status'] != 'success':
+        raise_error(data['data']['message'])
