@@ -32,7 +32,7 @@ class NoStationError(AirVisualError):
 
 
 class NotFoundError(AirVisualError):
-    """Define an error for when a city cannot be found."""
+    """Define an error for when a location (city or node) cannot be found."""
 
     pass
 
@@ -55,6 +55,7 @@ ERROR_CODES = {
     'city_not_found': NotFoundError,
     'incorrect_api_key': InvalidKeyError,
     'no_nearest_station': NoStationError,
+    'node not found': NotFoundError,
     'permission_denied': UnauthorizedError,
 }
 
@@ -62,7 +63,7 @@ ERROR_CODES = {
 def raise_error(error_type: str) -> None:
     """Raise the appropriate error based on error message."""
     try:
-        [error] = [v for k, v in ERROR_CODES.items() if k in error_type]
-    except ValueError:
+        error = next((v for k, v in ERROR_CODES.items() if k in error_type))
+    except StopIteration:
         error = AirVisualError
     raise error(error_type)
