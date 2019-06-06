@@ -6,3 +6,4 @@ Pipfile.lock
 __pycache__
 coverage.xml
 simplisafe_python.egg-info
+tags
