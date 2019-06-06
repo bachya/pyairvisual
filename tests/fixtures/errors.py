@@ -41,7 +41,7 @@ def fixture_no_nearest_station():
 @pytest.fixture()
 def fixture_no_node():
     """Return a response when a node cannot be found."""
-    return 'node not found'
+    return "node not found"
 
 
 @pytest.fixture()
