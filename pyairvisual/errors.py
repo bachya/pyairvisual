@@ -50,13 +50,13 @@ class UnauthorizedError(AirVisualError):
 
 
 ERROR_CODES = {
-    'api_key_expired': KeyExpiredError,
-    'call_limit_reached': LimitReachedError,
-    'city_not_found': NotFoundError,
-    'incorrect_api_key': InvalidKeyError,
-    'no_nearest_station': NoStationError,
-    'node not found': NotFoundError,
-    'permission_denied': UnauthorizedError,
+    "api_key_expired": KeyExpiredError,
+    "call_limit_reached": LimitReachedError,
+    "city_not_found": NotFoundError,
+    "incorrect_api_key": InvalidKeyError,
+    "no_nearest_station": NoStationError,
+    "node not found": NotFoundError,
+    "permission_denied": UnauthorizedError,
 }
 
 
