@@ -9,12 +9,14 @@ from pyairvisual.errors import AirVisualError, UnauthorizedError
 
 _LOGGER = logging.getLogger(__name__)
 
+API_KEY = "<API_KEY>"
+
 
 async def main() -> None:  # pylint: disable=too-many-statements
     """Create the aiohttp session and run the example."""
     logging.basicConfig(level=logging.INFO)
     async with ClientSession() as websession:
-        client = Client(websession, api_key="<API KEY>")
+        client = Client(websession, api_key=API_KEY)
 
         # Get supported locations (by location):
         try:
