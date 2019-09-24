@@ -30,7 +30,7 @@ class Client:  # pylint: disable=too-few-public-methods
         base_url: str = API_URL_SCAFFOLD,
         headers: dict = None,
         params: dict = None,
-        json: dict = None
+        json: dict = None,
     ) -> dict:
         """Make a request against AirVisual."""
         if not headers:
@@ -43,7 +43,7 @@ class Client:  # pylint: disable=too-few-public-methods
         if self._api_key:
             params.update({"key": self._api_key})
 
-        url = "{0}/{1}".format(base_url, endpoint)
+        url = f"{base_url}/{endpoint}"
         async with self.websession.request(
             method, url, headers=headers, params=params, json=json
         ) as resp:

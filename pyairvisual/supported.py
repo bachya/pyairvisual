@@ -31,4 +31,4 @@ class Supported:
         data = await self._request(
             "get", "stations", params={"city": city, "state": state, "country": country}
         )
-        return [station for station in data["data"]]
+        return data["data"]
