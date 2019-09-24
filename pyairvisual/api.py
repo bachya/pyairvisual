@@ -22,7 +22,7 @@ class API:
         if latitude and longitude:
             params.update({"lat": str(latitude), "lon": str(longitude)})
 
-        data = await self._request("get", "nearest_{0}".format(kind), params=params)
+        data = await self._request("get", f"nearest_{kind}", params=params)
         return data["data"]
 
     async def city(self, city: str, state: str, country: str) -> dict:
