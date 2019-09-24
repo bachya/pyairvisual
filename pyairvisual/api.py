@@ -1,5 +1,5 @@
 """Define an object to interact with the AirVisual data API."""
-from typing import Awaitable, Callable, Union
+from typing import Awaitable, Callable, Optional, Union
 
 from .const import NODE_URL_SCAFFOLD
 
@@ -9,37 +9,41 @@ class API:
 
     def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:
         """Iniitialize."""
-        self._request = request
+        self._request: Callable[..., Awaitable[dict]] = request
 
     async def _nearest(
         self,
         kind: str,
-        latitude: Union[float, str] = None,
-        longitude: Union[float, str] = None,
+        latitude: Optional[Union[float, str]] = None,
+        longitude: Optional[Union[float, str]] = None,
     ) -> dict:
         """Return data from nearest city/station (IP or coordinates)."""
-        params = {}
+        params: dict = {}
         if latitude and longitude:
             params.update({"lat": str(latitude), "lon": str(longitude)})
 
-        data = await self._request("get", f"nearest_{kind}", params=params)
+        data: dict = await self._request("get", f"nearest_{kind}", params=params)
         return data["data"]
 
     async def city(self, city: str, state: str, country: str) -> dict:
         """Return data for the specified city."""
-        data = await self._request(
+        data: dict = await self._request(
             "get", "city", params={"city": city, "state": state, "country": country}
         )
         return data["data"]
 
     async def nearest_city(
-        self, latitude: Union[float, str] = None, longitude: Union[float, str] = None
+        self,
+        latitude: Optional[Union[float, str]] = None,
+        longitude: Optional[Union[float, str]] = None,
     ) -> dict:
         """Return data from nearest city (IP or coordinates)."""
         return await self._nearest("city", latitude, longitude)
 
     async def nearest_station(
-        self, latitude: Union[float, str] = None, longitude: Union[float, str] = None
+        self,
+        latitude: Optional[Union[float, str]] = None,
+        longitude: Optional[Union[float, str]] = None,
     ) -> dict:
         """Return data from nearest station (IP or coordinates)."""
         return await self._nearest("station", latitude, longitude)
@@ -55,7 +59,7 @@ class API:
 
     async def station(self, station: str, city: str, state: str, country: str) -> dict:
         """Return data for the specified city."""
-        data = await self._request(
+        data: dict = await self._request(
             "get",
             "station",
             params={
