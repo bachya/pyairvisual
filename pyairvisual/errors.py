@@ -1,4 +1,5 @@
 """Define package errors."""
+from typing import Dict, Type
 
 
 class AirVisualError(Exception):
@@ -49,7 +50,7 @@ class UnauthorizedError(AirVisualError):
     pass
 
 
-ERROR_CODES = {
+ERROR_CODES: Dict[str, Type[AirVisualError]] = {
     "api_key_expired": KeyExpiredError,
     "call_limit_reached": LimitReachedError,
     "city_not_found": NotFoundError,
@@ -62,6 +63,7 @@ ERROR_CODES = {
 
 def raise_error(error_type: str) -> None:
     """Raise the appropriate error based on error message."""
+    error: Type[AirVisualError]
     try:
         error = next((v for k, v in ERROR_CODES.items() if k in error_type))
     except StopIteration:
