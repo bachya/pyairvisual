@@ -30,6 +30,7 @@ If you wish to continue using the previous, synchronous version of
 
 * Python 3.6
 * Python 3.7
+* Python 3.8
 
 # Installation
 
