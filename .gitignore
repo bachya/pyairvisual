@@ -1,9 +1,9 @@
 .coverage
 .mypy_cache
-.pytest_cache
 .tox/
-Pipfile.lock
-__pycache__
+.venv
+__pycache__/
+pyairvisual.egg-info
 coverage.xml
-simplisafe_python.egg-info
+poetry.lock
 tags

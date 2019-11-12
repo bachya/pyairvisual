@@ -1,21 +1,21 @@
 clean:
-	pipenv --rm
+	. .venv/bin/activate; pre-commit uninstall
+	rm -rf .venv/
 coverage:
-	pipenv run py.test -s --verbose --cov-report term-missing --cov-report xml --cov=pyairvisual tests
+	.venv/bin/py.test -s --verbose --cov-report term-missing --cov-report xml --cov=pyairvisual tests
 init:
-	pip3 install --upgrade pip pipenv
-	pipenv lock
-	pipenv install --three --dev
-	pipenv run pre-commit install
+	virtualenv .venv
+	.venv/bin/pip3 install poetry
+	. .venv/bin/activate; poetry lock; poetry install; pre-commit install
 lint:
-	pipenv run flake8 pyairvisual
-	pipenv run pydocstyle pyairvisual
-	pipenv run pylint pyairvisual
+	.venv/bin/flake8 pyairvisual
+	.venv/bin/pydocstyle pyairvisual
+	.venv/bin/pylint pyairvisual
 publish:
-	pipenv run python setup.py sdist bdist_wheel
-	pipenv run twine upload dist/*
-	rm -rf dist/ build/ .egg pyairvisual.egg-info/
+	.venv/bin/poetry build
+	.venv/bin/poetry publish
+	rm -rf dist/ build/ .egg *.egg-info/
 test:
-	pipenv run py.test
+	.venv/bin/py.test
 typing:
-	pipenv run mypy --ignore-missing-imports pyairvisual
+	.venv/bin/mypy --ignore-missing-imports pyairvisual
