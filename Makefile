@@ -8,6 +8,7 @@ init:
 	.venv/bin/pip3 install poetry
 	. .venv/bin/activate; poetry lock; poetry install; pre-commit install
 lint:
+	.venv/bin/black --check --fast pyairvisual
 	.venv/bin/flake8 pyairvisual
 	.venv/bin/pydocstyle pyairvisual
 	.venv/bin/pylint pyairvisual

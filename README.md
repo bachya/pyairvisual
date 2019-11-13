@@ -1,6 +1,6 @@
 # ☀️ pyairvisual: a thin Python wrapper for the AirVisual© API
 
-[![Travis CI](https://travis-ci.org/bachya/pyairvisual.svg?branch=master)](https://travis-ci.org/bachya/pyairvisual)
+[![CI](https://github.com/bachya/pyairvisual/workflows/CI/badge.svg)](https://github.com/bachya/pyairvisual/actions)
 [![PyPi](https://img.shields.io/pypi/v/pyairvisual.svg)](https://pypi.python.org/pypi/pyairvisual)
 [![Version](https://img.shields.io/pypi/pyversions/pyairvisual.svg)](https://pypi.python.org/pypi/pyairvisual)
 [![License](https://img.shields.io/pypi/l/pyairvisual.svg)](https://github.com/bachya/pyairvisual/blob/master/LICENSE)
