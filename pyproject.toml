@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyairvisual"
-version = "3.0.2"
+version = "3.0.3"
 description = "A simple API for AirVisual air quality data"
 readme = "README.md"
 authors = ["Aaron Bach <bachya1208@gmail.com>"]
