@@ -1,0 +1,43 @@
+{
+  "settings": {
+    "node_name": "hlubocepy"
+  },
+  "current": {
+    "ts": "2019-02-15T23:32:49.573Z",
+    "tp": 2.3,
+    "hm": 73,
+    "p2": 35,
+    "co": 479
+  },
+  "historical": {
+    "instant": [
+      {
+        "ts": "2019-02-15T23:32:49.573Z",
+        "tp": 2.3,
+        "hm": 73,
+        "p2": 35,
+        "co": 479
+      }
+    ],
+    "daily": [
+      {
+        "p2_sum": 3321,
+        "p2_count": 204,
+        "p1_sum": 0,
+        "p1_count": 204,
+        "p01_sum": 0,
+        "p01_count": 204,
+        "co_sum": 93265,
+        "co_count": 204,
+        "hm_sum": 11906,
+        "hm_count": 204,
+        "tp_sum": 1535.0999999999997,
+        "tp_count": 204,
+        "voc_sum": 0,
+        "voc_count": 204,
+        "ts": "2019-02-15T00:00:00.000Z",
+        "outdoor_station": {}
+      }
+    ]
+  }
+}

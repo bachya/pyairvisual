@@ -1,5 +1,6 @@
 """Define a client to interact with AirVisual."""
-from typing import Optional, Union
+from json.decoder import JSONDecodeError
+from typing import Optional
 
 import aiohttp
 
@@ -46,14 +47,18 @@ class Client:  # pylint: disable=too-few-public-methods
         async with self.websession.request(
             method, f"{base_url}/{endpoint}", headers=headers, params=params, json=json
         ) as resp:
-            data: Union[str, dict] = await resp.json(content_type=None)
+            data: dict
+            try:
+                data = await resp.json(content_type=None)
+            except JSONDecodeError:
+                response_text = await resp.text()
+                data = {"status": "fail", "data": {"message": response_text}}
+
             _raise_on_error(data)
-            return data  # type: ignore
+            return data
 
 
-def _raise_on_error(data: Union[str, dict]) -> None:
+def _raise_on_error(data: dict) -> None:
     """Raise the appropriate exception on error."""
-    if isinstance(data, str):
-        raise_error(data)
-    elif "status" in data and data["status"] != "success":
+    if "status" in data and data["status"] != "success":
         raise_error(data["data"]["message"])

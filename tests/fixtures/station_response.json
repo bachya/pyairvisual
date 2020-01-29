@@ -1,0 +1,147 @@
+{
+  "status": "success",
+  "data": {
+    "name": "US Embassy in Beijing",
+    "local_name": "美国驻北京大使馆",
+    "city": "Beijing",
+    "state": "Beijing",
+    "country": "China",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        116.466258,
+        39.954352
+      ]
+    },
+    "forecasts": [
+      {
+        "ts": "2017-09-04T03:00:00.000Z",
+        "aqius": 174,
+        "aqicn": 131,
+        "tp": 26,
+        "tp_min": 26,
+        "pr": 1012,
+        "hu": 64,
+        "ws": 2,
+        "wd": 196,
+        "ic": "02d"
+      },
+      {
+        "ts": "2017-09-04T06:00:00.000Z",
+        "aqius": 158,
+        "aqicn": 94,
+        "tp": 28,
+        "tp_min": 28,
+        "pr": 1010,
+        "hu": 51,
+        "ws": 4,
+        "wd": 192,
+        "ic": "10d"
+      },
+      {
+        "ts": "2017-09-07T00:00:00.000Z",
+        "aqius": 158,
+        "aqicn": 94,
+        "tp": 21,
+        "tp_min": 21,
+        "pr": 1008,
+        "hu": 55,
+        "ws": 1,
+        "wd": 338,
+        "ic": "01d"
+      }
+    ],
+    "current": {
+      "weather": {
+        "ts": "2017-09-04T02:00:00.000Z",
+        "tp": 24,
+        "pr": 1012,
+        "hu": 78,
+        "ws": 0,
+        "wd": 122,
+        "ic": "50d"
+      },
+      "pollution": {
+        "ts": "2017-09-04T02:00:00.000Z",
+        "aqius": 171,
+        "mainus": "p2",
+        "aqicn": 125,
+        "maincn": "p2",
+        "p2": {
+          "conc": 95,
+          "aqius": 171,
+          "aqicn": 125
+        }
+      }
+    },
+    "history": {
+      "weather": [
+        {
+          "ts": "2017-09-04T02:00:00.000Z",
+          "tp": 24,
+          "pr": 1012,
+          "hu": 78,
+          "ws": 0,
+          "wd": 122,
+          "ic": "50d"
+        },
+        {
+          "ts": "2017-09-04T01:00:00.000Z",
+          "tp": 23,
+          "pr": 1012,
+          "hu": 83,
+          "ws": 0,
+          "wd": 154,
+          "ic": "50d"
+        },
+        {
+          "ts": "2017-09-02T02:00:00.000Z",
+          "tp": 24,
+          "pr": 1013,
+          "hu": 81,
+          "ws": 0,
+          "wd": 106,
+          "ic": "50d"
+        }
+      ],
+      "pollution": [
+        {
+          "ts": "2017-09-04T02:00:00.000Z",
+          "aqius": 171,
+          "mainus": "p2",
+          "aqicn": 125,
+          "maincn": "p2",
+          "p2": {
+            "conc": 95,
+            "aqius": 171,
+            "aqicn": 125
+          }
+        },
+        {
+          "ts": "2017-09-04T01:00:00.000Z",
+          "aqius": 169,
+          "mainus": "p2",
+          "aqicn": 119,
+          "maincn": "p2",
+          "p2": {
+            "conc": 90,
+            "aqius": 169,
+            "aqicn": 119
+          }
+        },
+        {
+          "ts": "2017-09-02T03:00:00.000Z",
+          "aqius": 174,
+          "mainus": "p2",
+          "aqicn": 131,
+          "maincn": "p2",
+          "p2": {
+            "conc": 100,
+            "aqius": 174,
+            "aqicn": 131
+          }
+        }
+      ]
+    }
+  }
+}
