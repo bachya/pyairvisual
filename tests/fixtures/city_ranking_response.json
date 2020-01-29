@@ -1,0 +1,34 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "city": "Portland",
+      "state": "Oregon",
+      "country": "USA",
+      "ranking": {
+        "current_aqi": 183,
+        "current_aqi_cn": 154
+      }
+    },
+    {
+      "city": "Eugene",
+      "state": "Oregon",
+      "country": "USA",
+      "ranking": {
+        "current_aqi": 151,
+        "current_aqi_cn": 77
+      }
+    },
+    {
+      "city": "Richards Bay",
+      "state": "KwaZulu-Natal",
+      "country": "South Africa",
+      "ranking": {
+        "current_aqi": 3,
+        "current_aqi_cn": 3,
+        "last_aqi": 5,
+        "last_aqi_cn": 5
+      }
+    }
+  ]
+}

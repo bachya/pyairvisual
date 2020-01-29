@@ -1,0 +1,1 @@
+"""Define fixtures for tests."""

@@ -1,0 +1,33 @@
+{
+  "status": "success",
+  "data": {
+    "city": "Los Angeles",
+    "state": "California",
+    "country": "USA",
+    "location": {
+      "type": "Point",
+      "coordinates": [
+        -118.2417,
+        34.0669
+      ]
+    },
+    "current": {
+      "weather": {
+        "ts": "2018-06-10T01:00:00.000Z",
+        "hu": 60,
+        "ic": "01d",
+        "pr": 1012,
+        "tp": 25,
+        "wd": 230,
+        "ws": 4.6
+      },
+      "pollution": {
+        "ts": "2018-06-10T00:00:00.000Z",
+        "aqius": 66,
+        "mainus": "p2",
+        "aqicn": 44,
+        "maincn": "p1"
+      }
+    }
+  }
+}

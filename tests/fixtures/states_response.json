@@ -1,0 +1,23 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "state": "New South Wales"
+    },
+    {
+      "state": "Queensland"
+    },
+    {
+      "state": "South Australia"
+    },
+    {
+      "state": "Tasmania"
+    },
+    {
+      "state": "Victoria"
+    },
+    {
+      "state": "Western Australia"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "data": [
+    {
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          116.466258,
+          39.954352
+        ]
+      },
+      "station": "US Embassy in Beijing"
+    },
+    {
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          116.2148532181,
+          40.0078007235
+        ]
+      },
+      "station": "Botanical Garden"
+    }
+  ]
+}
