@@ -147,7 +147,7 @@ async def main() -> None:
 asyncio.get_event_loop().run_until_complete(main())
 ```
 
-Check out `example.py`, the tests, and the source files themselves for method
+Check out the examples, the tests, and the source files themselves for method
 signatures and more examples.
 
 # Contributing
