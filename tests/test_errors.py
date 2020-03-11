@@ -24,7 +24,9 @@ async def test_api_key_expired(aresponses):
         "/v2/nearest_city",
         "get",
         aresponses.Response(
-            text=load_fixture("error_key_expired_response.json"), status=401
+            text=load_fixture("error_key_expired_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=401,
         ),
     )
 
@@ -42,7 +44,9 @@ async def test_call_limit_reached(aresponses):
         "/v2/nearest_city",
         "get",
         aresponses.Response(
-            text=load_fixture("error_limit_reached_response.json"), status=401
+            text=load_fixture("error_limit_reached_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=401,
         ),
     )
 
@@ -60,7 +64,9 @@ async def test_city_not_found(aresponses):
         "/v2/nearest_city",
         "get",
         aresponses.Response(
-            text=load_fixture("error_city_not_found_response.json"), status=401
+            text=load_fixture("error_city_not_found_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=401,
         ),
     )
 
@@ -78,7 +84,9 @@ async def test_generic_error(aresponses):
         "/v2/nearest_city",
         "get",
         aresponses.Response(
-            text=load_fixture("error_generic_response.json"), status=401
+            text=load_fixture("error_generic_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=401,
         ),
     )
 
@@ -96,7 +104,9 @@ async def test_incorrect_api_key(aresponses):
         "/v2/nearest_city",
         "get",
         aresponses.Response(
-            text=load_fixture("error_incorrect_api_key_response.json"), status=401
+            text=load_fixture("error_incorrect_api_key_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=401,
         ),
     )
 
@@ -114,7 +124,9 @@ async def test_no_nearest_station(aresponses):
         "/v2/nearest_station",
         "get",
         aresponses.Response(
-            text=load_fixture("error_no_nearest_station_response.json"), status=401
+            text=load_fixture("error_no_nearest_station_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=401,
         ),
     )
 
@@ -125,18 +137,42 @@ async def test_no_nearest_station(aresponses):
 
 
 @pytest.mark.asyncio
-async def test_node_not_found(aresponses, event_loop):
+async def test_node_not_found(aresponses):
     """Test that the proper error is raised when no Pro node is found."""
     aresponses.add(
         "www.airvisual.com",
         "/api/v2/node/12345",
         "get",
-        aresponses.Response(text="node not found", status=200),
+        aresponses.Response(
+            text='"node not found"',
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
     )
 
     with pytest.raises(NotFoundError):
-        async with aiohttp.ClientSession(loop=event_loop) as websession:
-            client = Client(websession, api_key=TEST_API_KEY)
+        async with aiohttp.ClientSession() as websession:
+            client = Client(websession)
+            await client.api.node("12345")
+
+
+@pytest.mark.asyncio
+async def test_non_json_response(aresponses):
+    """Test that the proper error is raised when the response text isn't JSON."""
+    aresponses.add(
+        "www.airvisual.com",
+        "/api/v2/node/12345",
+        "get",
+        aresponses.Response(
+            text="This is a valid response, but it isn't JSON.",
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
+    )
+
+    with pytest.raises(AirVisualError):
+        async with aiohttp.ClientSession() as websession:
+            client = Client(websession)
             await client.api.node("12345")
 
 
@@ -148,7 +184,9 @@ async def test_permission_denied(aresponses):
         "/v2/nearest_station",
         "get",
         aresponses.Response(
-            text=load_fixture("error_permission_denied_response.json"), status=401
+            text=load_fixture("error_permission_denied_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=401,
         ),
     )
 

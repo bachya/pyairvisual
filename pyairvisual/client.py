@@ -47,11 +47,22 @@ class Client:  # pylint: disable=too-few-public-methods
         async with self.websession.request(
             method, f"{base_url}/{endpoint}", headers=headers, params=params, json=json
         ) as resp:
-            data: dict
             try:
                 data = await resp.json(content_type=None)
             except JSONDecodeError:
+                # The response can't be parsed as JSON, so we'll use its body text
+                # in an error:
                 response_text = await resp.text()
+                data = {"status": "fail", "data": {"message": response_text}}
+
+            if isinstance(data, str):
+                # In some cases, the AirVisual API will return a quoted string in its
+                # response body (e.g., "\"node not found\""), which is technically valid
+                # JSON. Additionally, AirVisual sets that response's Content-Type header
+                # to application/json (#smh). Together, these facotrs will allow a
+                # non-true-JSON  payload to escape the try/except above. So, if we get
+                # here, we use the string value (with quotes removed) to raise an error:
+                response_text = data.replace('"', "")
                 data = {"status": "fail", "data": {"message": response_text}}
 
             _raise_on_error(data)

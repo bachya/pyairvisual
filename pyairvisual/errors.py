@@ -63,7 +63,6 @@ ERROR_CODES: Dict[str, Type[AirVisualError]] = {
 
 def raise_error(error_type: str) -> None:
     """Raise the appropriate error based on error message."""
-    error: Type[AirVisualError]
     try:
         error = next((v for k, v in ERROR_CODES.items() if k in error_type))
     except StopIteration:
