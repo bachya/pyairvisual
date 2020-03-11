@@ -24,7 +24,9 @@ async def test_aqi_ranking(aresponses):
         "/v2/city_ranking",
         "get",
         aresponses.Response(
-            text=load_fixture("city_ranking_response.json"), status=200
+            text=load_fixture("city_ranking_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
         ),
     )
 
@@ -44,7 +46,11 @@ async def test_city_by_coordinates(aresponses):
         "api.airvisual.com",
         "/v2/nearest_city",
         "get",
-        aresponses.Response(text=load_fixture("city_response.json"), status=200),
+        aresponses.Response(
+            text=load_fixture("city_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
     )
 
     async with aiohttp.ClientSession() as websession:
@@ -64,7 +70,11 @@ async def test_city_by_ip(aresponses):
         "api.airvisual.com",
         "/v2/nearest_city",
         "get",
-        aresponses.Response(text=load_fixture("city_response.json"), status=200),
+        aresponses.Response(
+            text=load_fixture("city_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
     )
 
     async with aiohttp.ClientSession() as websession:
@@ -82,7 +92,11 @@ async def test_city_by_name(aresponses):
         "api.airvisual.com",
         "/v2/city",
         "get",
-        aresponses.Response(text=load_fixture("city_response.json"), status=200),
+        aresponses.Response(
+            text=load_fixture("city_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
     )
 
     async with aiohttp.ClientSession() as websession:
@@ -103,7 +117,11 @@ async def test_node(aresponses):
         "www.airvisual.com",
         "/api/v2/node/12345",
         "get",
-        aresponses.Response(text=load_fixture("node_response.json"), status=200),
+        aresponses.Response(
+            text=load_fixture("node_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
     )
 
     async with aiohttp.ClientSession() as websession:
@@ -122,7 +140,11 @@ async def test_station_by_coordinates(aresponses):
         "api.airvisual.com",
         "/v2/nearest_station",
         "get",
-        aresponses.Response(text=load_fixture("station_response.json"), status=200),
+        aresponses.Response(
+            text=load_fixture("station_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
     )
 
     async with aiohttp.ClientSession() as websession:
@@ -142,7 +164,11 @@ async def test_station_by_ip(aresponses):
         "api.airvisual.com",
         "/v2/nearest_station",
         "get",
-        aresponses.Response(text=load_fixture("station_response.json"), status=200),
+        aresponses.Response(
+            text=load_fixture("station_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
     )
 
     async with aiohttp.ClientSession() as websession:
@@ -160,7 +186,11 @@ async def test_station_by_name(aresponses):
         "api.airvisual.com",
         "/v2/station",
         "get",
-        aresponses.Response(text=load_fixture("station_response.json"), status=200),
+        aresponses.Response(
+            text=load_fixture("station_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
     )
 
     async with aiohttp.ClientSession() as websession:
