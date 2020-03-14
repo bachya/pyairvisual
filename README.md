@@ -140,8 +140,12 @@ async def main() -> None:
     cities = await client.supported.cities("USA", "Colorado")
     stations = await client.supported.stations("USA", "Colorado", "Denver")
 
-    # AirVisual Node/Pro units can be queried via the cloud API:
-    data = await client.node.from_cloud_api("12345abcdef")
+    # AirVisual Node/Pro units can be queried via the cloud API or locally:
+    #   1. The cloud API requires an ID, which can be found via the online dashboard
+    #   2. The local option requires a password, which can be found in the unit's
+    #      settings menu (under "Network"):
+    cloud_data = await client.node.from_cloud_api("<YOUR_NODE_PRO_ID>")
+    local_data = await client.node.from_samba("<NODE_PRO_IP_ADDRESS>", "<NODE_PRO_PASSWORD>")
 
 
 asyncio.get_event_loop().run_until_complete(main())
