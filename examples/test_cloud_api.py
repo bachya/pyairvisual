@@ -1,4 +1,4 @@
-"""Run an example script to quickly test."""
+"""Run an example against the AirVisual cloud API."""
 import asyncio
 import logging
 
@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 API_KEY = "<API_KEY>"
 
 
-async def main() -> None:  # pylint: disable=too-many-statements
+async def main() -> None:
     """Create the aiohttp session and run the example."""
     logging.basicConfig(level=logging.INFO)
     async with ClientSession() as websession:
@@ -90,9 +90,6 @@ async def main() -> None:  # pylint: disable=too-many-statements
             _LOGGER.error(err)
         except AirVisualError as err:
             _LOGGER.error("There was an error: %s", err)
-
-        # Get info on a AirVisual Pro node:
-        _LOGGER.info(await client.api.node("zEp8CifbnasWtToBc"))
 
 
 asyncio.get_event_loop().run_until_complete(main())

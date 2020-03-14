@@ -1,7 +1,7 @@
 """Define an object to interact with the AirVisual data API."""
 from typing import Awaitable, Callable, Optional, Union
 
-from .const import NODE_URL_SCAFFOLD
+API_URL_SCAFFOLD = "https://api.airvisual.com/v2"
 
 
 class API:
@@ -47,10 +47,6 @@ class API:
     ) -> dict:
         """Return data from nearest station (IP or coordinates)."""
         return await self._nearest("station", latitude, longitude)
-
-    async def node(self, node_id: str) -> dict:
-        """Return data from a node by its ID."""
-        return await self._request("get", node_id, base_url=NODE_URL_SCAFFOLD)
 
     async def ranking(self) -> dict:
         """Return a sorted array of selected major cities in the world."""
