@@ -8,6 +8,7 @@ from pyairvisual.errors import (
     InvalidKeyError,
     KeyExpiredError,
     LimitReachedError,
+    NodeProError,
     NoStationError,
     NotFoundError,
     UnauthorizedError,
@@ -150,10 +151,10 @@ async def test_node_not_found(aresponses):
         ),
     )
 
-    with pytest.raises(NotFoundError):
+    with pytest.raises(NodeProError):
         async with aiohttp.ClientSession() as websession:
             client = Client(websession)
-            await client.api.node("12345")
+            await client.node.from_cloud_api("12345")
 
 
 @pytest.mark.asyncio
@@ -173,7 +174,7 @@ async def test_non_json_response(aresponses):
     with pytest.raises(AirVisualError):
         async with aiohttp.ClientSession() as websession:
             client = Client(websession)
-            await client.api.node("12345")
+            await client.node.from_cloud_api("12345")
 
 
 @pytest.mark.asyncio

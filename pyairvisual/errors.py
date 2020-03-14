@@ -32,6 +32,12 @@ class NoStationError(AirVisualError):
     pass
 
 
+class NodeProError(AirVisualError):
+    """Define an error related to Node/Pro errors."""
+
+    pass
+
+
 class NotFoundError(AirVisualError):
     """Define an error for when a location (city or node) cannot be found."""
 
@@ -56,13 +62,14 @@ ERROR_CODES: Dict[str, Type[AirVisualError]] = {
     "city_not_found": NotFoundError,
     "incorrect_api_key": InvalidKeyError,
     "no_nearest_station": NoStationError,
-    "node not found": NotFoundError,
+    "node not found": NodeProError,
     "permission_denied": UnauthorizedError,
 }
 
 
 def raise_error(error_type: str) -> None:
     """Raise the appropriate error based on error message."""
+    error: Type[AirVisualError]
     try:
         error = next((v for k, v in ERROR_CODES.items() if k in error_type))
     except StopIteration:

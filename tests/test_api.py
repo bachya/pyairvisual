@@ -111,29 +111,6 @@ async def test_city_by_name(aresponses):
 
 
 @pytest.mark.asyncio
-async def test_node(aresponses):
-    """Test getting a node."""
-    aresponses.add(
-        "www.airvisual.com",
-        "/api/v2/node/12345",
-        "get",
-        aresponses.Response(
-            text=load_fixture("node_response.json"),
-            headers={"Content-Type": "application/json"},
-            status=200,
-        ),
-    )
-
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
-        data = await client.api.node("12345")
-        assert data["current"]["tp"] == 2.3
-        assert data["current"]["hm"] == 73
-        assert data["current"]["p2"] == 35
-        assert data["current"]["co"] == 479
-
-
-@pytest.mark.asyncio
 async def test_station_by_coordinates(aresponses):
     """Test getting a station by latitude and longitude."""
     aresponses.add(

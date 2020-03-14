@@ -4,9 +4,9 @@ from typing import Optional
 
 import aiohttp
 
-from .api import API
-from .const import API_URL_SCAFFOLD
+from .api import API, API_URL_SCAFFOLD
 from .errors import raise_error
+from .node import Node
 from .supported import Supported
 
 
@@ -21,6 +21,7 @@ class Client:  # pylint: disable=too-few-public-methods
         self.websession: aiohttp.ClientSession = websession
 
         self.api: API = API(self.request)
+        self.node: Node = Node(self.request)
         self.supported: Supported = Supported(self.request)
 
     async def request(
