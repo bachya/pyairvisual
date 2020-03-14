@@ -107,7 +107,7 @@ async def main() -> None:
     async with ClientSession() as websession:
     # If an API key isn't provided, only Nodes can be queried; everything else
     # requires an API key:
-    client = Client(websession, api_key='<YOUR AIRVISUAL API KEY>')
+    client = Client(websession, api_key="<YOUR_AIRVISUAL_API_KEY>")
 
     # Get data based on the city nearest to your IP address:
     data = await client.data.nearest_city()
@@ -118,7 +118,7 @@ async def main() -> None:
 
     # ...or get it explicitly:
     data = await client.data.city(
-        city='Los Angeles', state='California', country='USA')
+        city="Los Angeles", state="California", country="USA")
 
     # If you have the appropriate API key, you can also get data based on
     # station (nearest or explicit):
@@ -126,22 +126,22 @@ async def main() -> None:
     data = await client.data.nearest_station(
         latitude=39.742599, longitude=-104.9942557)
     data = await client.data.station(
-        station='US Embassy in Beijing',
-        city='Beijing',
-        state='Beijing',
-        country='China')
+        station="US Embassy in Beijing",
+        city="Beijing",
+        state="Beijing",
+        country="China")
 
     # With the appropriate API key, you can get an air quality ranking:
     data = await client.data.ranking()
 
     # pyairvisual gives you several methods to look locations up:
     countries = await client.supported.countries()
-    states = await client.supported.states('USA')
-    cities = await client.supported.cities('USA', 'Colorado')
-    stations = await client.supported.stations('USA', 'Colorado', 'Denver')
+    states = await client.supported.states("USA")
+    cities = await client.supported.cities("USA", "Colorado")
+    stations = await client.supported.stations("USA", "Colorado", "Denver")
 
-    # AirVisual Nodes can also be queried by ID
-    data = await client.api.node('12345abcdef')
+    # AirVisual Node/Pro units can be queried via the cloud API:
+    data = await client.node.from_cloud_api("12345abcdef")
 
 
 asyncio.get_event_loop().run_until_complete(main())
