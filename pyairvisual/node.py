@@ -27,7 +27,7 @@ class Node:
 
     async def from_samba(self, ip_or_hostname: str, password: str) -> dict:
         """Return local data from a node (via Samba)."""
-        loop = asyncio.get_running_loop()
+        loop = asyncio.get_event_loop()
         conn = SMBConnection("airvisual", password, "whatever", "airvisual")
         tmp_file = tempfile.NamedTemporaryFile()
 
