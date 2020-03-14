@@ -22,5 +22,11 @@ async def main() -> None:
         except AirVisualError as err:
             _LOGGER.error("There was an error: %s", err)
 
+        # Get data from the local Samba share on the unit:
+        try:
+            _LOGGER.info(await client.node.from_samba("172.16.11.180", "j9h46kar"))
+        except AirVisualError as err:
+            _LOGGER.error("There was an error: %s", err)
+
 
 asyncio.get_event_loop().run_until_complete(main())

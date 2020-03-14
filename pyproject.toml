@@ -38,11 +38,12 @@ classifiers = [
 
 [tool.poetry.dependencies]
 aiohttp = "^3.6.2"
-python = "^3.6.0"
 pysmb = "^1.1.28"
+python = "^3.6.0"
 
 [tool.poetry.dev-dependencies]
 aresponses = "^1.1.1"
+asynctest = "^0.13.0"
 pre-commit = "^2.0.1"
 pytest = "^5.3.5"
 pytest-aiohttp = "^0.3.0"
