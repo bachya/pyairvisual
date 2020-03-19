@@ -92,7 +92,9 @@ async def main() -> None:
 asyncio.get_event_loop().run_until_complete(main())
 ```
 
-Create a client and get to work:
+## Using the Cloud API
+
+Getting data from the AirVisual Cloud API is easy:
 
 ```python
 import asyncio
@@ -105,47 +107,94 @@ from pyairvisual import Client
 async def main() -> None:
     """Create the aiohttp session and run the example."""
     async with ClientSession() as websession:
-    # If an API key isn't provided, only Nodes can be queried; everything else
-    # requires an API key:
-    client = Client(websession, api_key="<YOUR_AIRVISUAL_API_KEY>")
+        # If an API key isn't provided, only Nodes can be queried; everything else
+        # requires an API key:
+        client = Client(websession, api_key="<YOUR_AIRVISUAL_API_KEY>")
 
-    # Get data based on the city nearest to your IP address:
-    data = await client.data.nearest_city()
+        # Get data based on the city nearest to your IP address:
+        data = await client.data.nearest_city()
 
-    # ...or get data based on the city nearest to a latitude/longitude:
-    data = await client.data.nearest_city(
-        latitude=39.742599, longitude=-104.9942557)
+        # ...or get data based on the city nearest to a latitude/longitude:
+        data = await client.data.nearest_city(
+            latitude=39.742599, longitude=-104.9942557)
 
-    # ...or get it explicitly:
-    data = await client.data.city(
-        city="Los Angeles", state="California", country="USA")
+        # ...or get it explicitly:
+        data = await client.data.city(
+            city="Los Angeles", state="California", country="USA")
 
-    # If you have the appropriate API key, you can also get data based on
-    # station (nearest or explicit):
-    data = await client.data.nearest_station()
-    data = await client.data.nearest_station(
-        latitude=39.742599, longitude=-104.9942557)
-    data = await client.data.station(
-        station="US Embassy in Beijing",
-        city="Beijing",
-        state="Beijing",
-        country="China")
+        # If you have the appropriate API key, you can also get data based on
+        # station (nearest or explicit):
+        data = await client.data.nearest_station()
+        data = await client.data.nearest_station(
+            latitude=39.742599, longitude=-104.9942557)
+        data = await client.data.station(
+            station="US Embassy in Beijing",
+            city="Beijing",
+            state="Beijing",
+            country="China")
 
-    # With the appropriate API key, you can get an air quality ranking:
-    data = await client.data.ranking()
+        # With the appropriate API key, you can get an air quality ranking:
+        data = await client.data.ranking()
 
-    # pyairvisual gives you several methods to look locations up:
-    countries = await client.supported.countries()
-    states = await client.supported.states("USA")
-    cities = await client.supported.cities("USA", "Colorado")
-    stations = await client.supported.stations("USA", "Colorado", "Denver")
+        # pyairvisual gives you several methods to look locations up:
+        countries = await client.supported.countries()
+        states = await client.supported.states("USA")
+        cities = await client.supported.cities("USA", "Colorado")
+        stations = await client.supported.stations("USA", "Colorado", "Denver")
 
-    # AirVisual Node/Pro units can be queried via the cloud API or locally:
-    #   1. The cloud API requires an ID, which can be found via the online dashboard
-    #   2. The local option requires a password, which can be found in the unit's
-    #      settings menu (under "Network"):
-    cloud_data = await client.node.from_cloud_api("<YOUR_NODE_PRO_ID>")
-    local_data = await client.node.from_samba("<NODE_PRO_IP_ADDRESS>", "<NODE_PRO_PASSWORD>")
+
+asyncio.get_event_loop().run_until_complete(main())
+```
+
+## Working with Node/Pro Units
+
+`pyairvisual` also allows users to interact with
+[Node/Pro units](https://www.airvisual.com/air-quality-monitor), both via the cloud API:
+
+```python
+import asyncio
+
+from aiohttp import ClientSession
+
+from pyairvisual import Client
+
+
+async def main() -> None:
+    """Create the aiohttp session and run the example."""
+    async with ClientSession() as websession:
+        client = Client(websession)
+
+        # The Node/Pro unit ID can be retrieved from the "API" section of the cloud
+        # dashboard:
+        data = await client.node.from_cloud_api("<NODE_ID>")
+
+
+asyncio.get_event_loop().run_until_complete(main())
+```
+
+...or over the local network:
+
+```python
+import asyncio
+
+from aiohttp import ClientSession
+
+from pyairvisual import Client
+from pyairvisual.node import NodeSamba
+
+
+async def main() -> None:
+    """Create the aiohttp session and run the example."""
+    async with ClientSession() as websession:
+        client = Client(websession)
+
+        # The unit password can be found on the device itself:
+        data = await client.node.from_samba(
+            "<IP_ADDRESS_OR_HOST>",
+            "<PASSWORD>",
+            include_history=True,
+            include_trends=True,
+        )
 
 
 asyncio.get_event_loop().run_until_complete(main())
