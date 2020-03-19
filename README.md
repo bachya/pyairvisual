@@ -172,7 +172,7 @@ async def main() -> None:
 asyncio.get_event_loop().run_until_complete(main())
 ```
 
-...or over the local network:
+...or over the local network (the unit password can be found on the device itself):
 
 ```python
 import asyncio
@@ -188,12 +188,17 @@ async def main() -> None:
     async with ClientSession() as websession:
         client = Client(websession)
 
-        # The unit password can be found on the device itself:
+        # Can take several optional parameters:
+        #   1. include_history: include historical measurements (defaults to True)
+        #   2. include_trends: include trends (defaults to True)
+        #   3. measurements_to_use: the number of measurements to use when calculating
+        #      trends (defaults to -1, which means "use all measurements")
         data = await client.node.from_samba(
             "<IP_ADDRESS_OR_HOST>",
             "<PASSWORD>",
             include_history=True,
             include_trends=True,
+            measurements_to_use=10,
         )
 
 
