@@ -70,6 +70,7 @@ TREND_DECREASING = "decreasing"
 def _calculate_trends(history: List[OrderedDict]) -> dict:
     """Calculate the trends of all data points in history data."""
     trends = {}
+    index_range = np.arange(0, len(history))
 
     for attribute in METRICS_TO_TREND:
         values = [
@@ -79,7 +80,6 @@ def _calculate_trends(history: List[OrderedDict]) -> dict:
             if attr == attribute
         ]
 
-        index_range = np.arange(0, len(values))
         index_array = np.array(values)
         linear_fit = np.polyfit(index_range, index_array, 1,)
         slope = round(linear_fit[0], 2)
