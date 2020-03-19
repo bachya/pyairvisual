@@ -117,13 +117,9 @@ class NodeSamba:
         except smb.base.NotConnectedError as err:
             raise NodeProError(f"The connection to the Node/Pro unit broke: {err}")
         except smb.base.SMBTimeout:
-            raise NodeProError("Timed out retrieving current measurements")
-        except (
-            smb.smb_structs.UnsupportedFeature,
-            smb.smb_structs.ProtocolError,
-            smb.smb_structs.OperationFailure,
-        ) as err:
-            raise NodeProError(f"Error while retrieving current measurements: {err}")
+            raise NodeProError("Timed out retrieving {filepath}")
+        except Exception as err:  # pylint: disable=broad-except
+            raise NodeProError(f"Error while retrieving {filepath}: {err}")
 
     async def async_connect(self) -> None:
         """Return cloud API data from a node its ID."""
@@ -159,23 +155,24 @@ class NodeSamba:
 
     async def async_get_history(self) -> List[OrderedDict]:
         """Get history data from the device."""
-        try:
-            history_files = self._conn.listPath(
-                SMB_SERVICE,
-                "/",
-                search=smb.smb_constants.SMB_FILE_ATTRIBUTE_NORMAL,
-                pattern=SAMBA_HISTORY_PATTERN,
-            )
-        except smb.base.NotConnectedError as err:
-            raise NodeProError(f"The connection to the Node/Pro unit broke: {err}")
-        except smb.base.SMBTimeout:
-            raise NodeProError("Timed out retrieving current history data")
-        except (
-            smb.smb_structs.UnsupportedFeature,
-            smb.smb_structs.ProtocolError,
-            smb.smb_structs.OperationFailure,
-        ) as err:
-            raise NodeProError(f"Error while retrieving history data: {err}")
+
+        def search_history():
+            """Search for the most recent history file."""
+            try:
+                return self._conn.listPath(
+                    SMB_SERVICE,
+                    "/",
+                    search=smb.smb_constants.SMB_FILE_ATTRIBUTE_NORMAL,
+                    pattern=SAMBA_HISTORY_PATTERN,
+                )
+            except smb.base.NotConnectedError as err:
+                raise NodeProError(f"The connection to the Node/Pro unit broke: {err}")
+            except smb.base.SMBTimeout:
+                raise NodeProError("Timed out retrieving current history data")
+            except Exception as err:  # pylint: disable=broad-except
+                raise NodeProError(f"Error while retrieving history data: {err}")
+
+        history_files = await self._loop.run_in_executor(None, search_history)
 
         if not history_files:
             raise NodeProError(
