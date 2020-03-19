@@ -23,16 +23,44 @@ SMB_USERNAME = "airvisual"
 
 _LOGGER = logging.getLogger(__name__)
 
-ATTRIBUTES_TO_TREND = [
-    "AQI(CN)",
-    "AQI(US)",
-    "CO2(ppm)",
-    "Humidity(%RH)",
-    "PM01(ug/m3)",
-    "PM10(ug/m3)",
-    "PM2_5(ug/m3)",
-    "VOC(ppb)",
+METRIC_AQI_CN = "aqi_cn"
+METRIC_AQI_US = "aqi_us"
+METRIC_CO2 = "co2"
+METRIC_HUMIDITY = "humidity"
+METRIC_PM01 = "pm0_1"
+METRIC_PM10 = "pm1_0"
+METRIC_PM25 = "pm2_5"
+METRIC_VOC = "voc"
+METRICS_TO_TREND = [
+    METRIC_AQI_CN,
+    METRIC_AQI_US,
+    METRIC_CO2,
+    METRIC_HUMIDITY,
+    METRIC_PM01,
+    METRIC_PM10,
+    METRIC_PM25,
+    METRIC_VOC,
 ]
+
+METRIC_MAPPING = {
+    "AQI(CN)": METRIC_AQI_CN,
+    "AQI(US)": METRIC_AQI_US,
+    "CO2(ppm)": METRIC_CO2,
+    "Humidity(%RH)": METRIC_HUMIDITY,
+    "PM01(ug/m3)": METRIC_PM01,
+    "PM10(ug/m3)": METRIC_PM10,
+    "PM2_5(ug/m3)": METRIC_PM25,
+    "VOC(ppb)": METRIC_VOC,
+    "co2_ppm": METRIC_CO2,
+    "humidity_RH": METRIC_HUMIDITY,
+    "pm01_ugm3": METRIC_PM01,
+    "pm10_ugm3": METRIC_PM10,
+    "pm25": METRIC_PM25,
+    "pm25_AQICN": METRIC_AQI_CN,
+    "pm25_AQIUS": METRIC_AQI_US,
+    "pm25_ugm3": METRIC_PM25,
+    "voc_ppb": METRIC_VOC,
+}
 
 TREND_FLAT = "flat"
 TREND_INCREASING = "increasing"
@@ -43,7 +71,7 @@ def _calculate_trends(history: List[OrderedDict]) -> dict:
     """Calculate the trends of all data points in history data."""
     trends = {}
 
-    for attribute in ATTRIBUTES_TO_TREND:
+    for attribute in METRICS_TO_TREND:
         values = [
             float(value)
             for measurement in history
@@ -56,14 +84,21 @@ def _calculate_trends(history: List[OrderedDict]) -> dict:
         linear_fit = np.polyfit(index_range, index_array, 1,)
         slope = round(linear_fit[0], 2)
 
+        metric = _get_normalized_metric_name(attribute)
+
         if slope > 0:
-            trends[attribute] = TREND_INCREASING
+            trends[metric] = TREND_INCREASING
         elif slope < 0:
-            trends[attribute] = TREND_DECREASING
+            trends[metric] = TREND_DECREASING
         else:
-            trends[attribute] = TREND_FLAT
+            trends[metric] = TREND_FLAT
 
     return trends
+
+
+def _get_normalized_metric_name(key: str) -> str:
+    """Return a normalized string (if it exists) for a metric."""
+    return METRIC_MAPPING.get(key, key)
 
 
 class NodeCloudAPI:
@@ -150,7 +185,18 @@ class NodeSamba:
         tmp_file.seek(0)
         raw = tmp_file.read()
         tmp_file.close()
-        return json.loads(raw.decode())
+
+        data = json.loads(raw.decode())
+        data["measurements"] = {
+            _get_normalized_metric_name(pollutant): value
+            for pollutant, value in data["measurements"][0].items()
+        }
+        data["status"]["sensor_life"] = {
+            _get_normalized_metric_name(pollutant): value
+            for pollutant, value in data["status"]["sensor_life"].items()
+        }
+
+        return data
 
     async def async_get_history(self) -> List[OrderedDict]:
         """Get history data from the device."""
@@ -183,8 +229,15 @@ class NodeSamba:
 
         def load_history():
             """Load."""
+            data = []
             with open(tmp_file.name) as file:
-                return list(csv.DictReader(file, delimiter=";"))
+                reader = csv.DictReader(file, delimiter=";")
+                for row in reader:
+                    _data = {}
+                    for header, value in row.items():
+                        _data[_get_normalized_metric_name(header)] = value
+                    data.append(_data)
+            return data
 
         history = await self._loop.run_in_executor(None, load_history)
 

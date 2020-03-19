@@ -82,28 +82,28 @@ async def test_node_by_samba():
                 TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
             )
 
-            assert data["current"]["measurements"][0]["co2_ppm"] == "442"
-            assert data["current"]["measurements"][0]["humidity_RH"] == "35"
-            assert data["current"]["measurements"][0]["pm01_ugm3"] == "3"
-            assert data["current"]["measurements"][0]["pm10_ugm3"] == "4"
-            assert data["current"]["measurements"][0]["pm25_AQICN"] == "6"
-            assert data["current"]["measurements"][0]["pm25_AQIUS"] == "17"
-            assert data["current"]["measurements"][0]["pm25_ugm3"] == "4.0"
-            assert data["current"]["measurements"][0]["temperature_C"] == "19.3"
-            assert data["current"]["measurements"][0]["temperature_F"] == "66.8"
-            assert data["current"]["measurements"][0]["voc_ppb"] == "-1"
+            assert data["current"]["measurements"]["co2"] == "442"
+            assert data["current"]["measurements"]["humidity"] == "35"
+            assert data["current"]["measurements"]["pm0_1"] == "3"
+            assert data["current"]["measurements"]["pm1_0"] == "4"
+            assert data["current"]["measurements"]["aqi_cn"] == "6"
+            assert data["current"]["measurements"]["aqi_us"] == "17"
+            assert data["current"]["measurements"]["pm2_5"] == "4.0"
+            assert data["current"]["measurements"]["temperature_C"] == "19.3"
+            assert data["current"]["measurements"]["temperature_F"] == "66.8"
+            assert data["current"]["measurements"]["voc"] == "-1"
 
             assert len(data["history"]) == 7
 
             assert data["trends"] == {
-                "AQI(CN)": "decreasing",
-                "AQI(US)": "decreasing",
-                "CO2(ppm)": "decreasing",
-                "Humidity(%RH)": "increasing",
-                "PM01(ug/m3)": "decreasing",
-                "PM10(ug/m3)": "decreasing",
-                "PM2_5(ug/m3)": "decreasing",
-                "VOC(ppb)": "flat",
+                "aqi_cn": "decreasing",
+                "aqi_us": "decreasing",
+                "co2": "decreasing",
+                "humidity": "increasing",
+                "pm0_1": "decreasing",
+                "pm1_0": "decreasing",
+                "pm2_5": "decreasing",
+                "voc": "flat",
             }
 
 
