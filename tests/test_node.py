@@ -126,6 +126,66 @@ async def test_node_by_samba_connect_errors():
 
 
 @pytest.mark.asyncio
+async def test_node_by_samba_fewer_trend_measurements():
+    """Test getting a node's trends with a configured number of measurements."""
+    async with aiohttp.ClientSession() as websession:
+        client = Client(websession)
+
+        # Mock the tempfile that current measurements get loaded into:
+        measurements_response = load_fixture("node_measurements_samba_response.json")
+        mock_measurements_tmp_file = MagicMock()
+        mock_measurements_tmp_file.read.return_value = measurements_response.encode()
+
+        # Mock the history file that SMBConnection returns:
+        mock_history_tmp_file = MagicMock()
+        type(mock_history_tmp_file).name = PropertyMock(
+            return_value="202003_AirVisual_values.txt"
+        )
+
+        # Mock the tempfile that history data gets loaded into:
+        mock_history_file = MagicMock()
+        type(mock_history_file).filename = PropertyMock(
+            return_value="202003_AirVisual_values.txt"
+        )
+
+        # Mock opening the history file into a CSV reader:
+        mop = mock_open(read_data=load_fixture("node_history_samba_response.txt"))
+        mop.return_value.__iter__ = lambda self: self
+        mop.return_value.__next__ = lambda self: next(iter(self.readline, ""))
+
+        with patch.object(
+            tempfile,
+            "NamedTemporaryFile",
+            side_effect=[mock_measurements_tmp_file, mock_history_tmp_file],
+        ), patch("smb.SMBConnection.SMBConnection.connect"), patch(
+            "smb.SMBConnection.SMBConnection.listPath", return_value=[mock_history_file]
+        ), patch(
+            "smb.SMBConnection.SMBConnection.retrieveFile",
+        ), patch(
+            "smb.SMBConnection.SMBConnection.close"
+        ), patch(
+            "builtins.open", mop
+        ):
+            data = await client.node.from_samba(
+                TEST_NODE_IP_ADDRESS,
+                TEST_NODE_PASSWORD,
+                include_history=False,
+                measurements_to_use=3,
+            )
+
+            assert data["trends"] == {
+                "aqi_cn": "flat",
+                "aqi_us": "flat",
+                "co2": "decreasing",
+                "humidity": "decreasing",
+                "pm0_1": "flat",
+                "pm1_0": "decreasing",
+                "pm2_5": "flat",
+                "voc": "flat",
+            }
+
+
+@pytest.mark.asyncio
 async def test_node_by_samba_get_file_errors():
     """Test various errors arising while getting a file via Samba."""
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)

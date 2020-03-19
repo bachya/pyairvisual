@@ -67,10 +67,14 @@ TREND_INCREASING = "increasing"
 TREND_DECREASING = "decreasing"
 
 
-def _calculate_trends(history: List[OrderedDict]) -> dict:
+def _calculate_trends(history: List[OrderedDict], measurements_to_use: int) -> dict:
     """Calculate the trends of all data points in history data."""
     trends = {}
-    index_range = np.arange(0, len(history))
+
+    if measurements_to_use == -1:
+        index_range = np.arange(0, len(history))
+    else:
+        index_range = np.arange(0, measurements_to_use)
 
     for attribute in METRICS_TO_TREND:
         values = [
@@ -79,6 +83,9 @@ def _calculate_trends(history: List[OrderedDict]) -> dict:
             for attr, value in measurement.items()
             if attr == attribute
         ]
+
+        if measurements_to_use != -1:
+            values = values[-measurements_to_use:]
 
         index_array = np.array(values)
         linear_fit = np.polyfit(index_range, index_array, 1,)
@@ -259,8 +266,10 @@ class Node:
         self,
         ip_or_hostname: str,
         password: str,
+        *,
         include_history: bool = True,
         include_trends: bool = True,
+        measurements_to_use: int = -1,
     ) -> dict:
         """Return local data from a node (via Samba)."""
         data = {}
@@ -275,6 +284,6 @@ class Node:
             if include_history:
                 data["history"] = history  # type: ignore
             if include_trends:
-                data["trends"] = _calculate_trends(history)
+                data["trends"] = _calculate_trends(history, measurements_to_use)
 
         return data
