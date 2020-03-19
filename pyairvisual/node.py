@@ -44,7 +44,6 @@ def _calculate_trends(history: List[OrderedDict]) -> dict:
     trends = {}
 
     for attribute in ATTRIBUTES_TO_TREND:
-        _LOGGER.info("Looking at %s", attribute)
         values = [
             float(value)
             for measurement in history
