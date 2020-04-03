@@ -7,7 +7,7 @@ import json
 import logging
 import tempfile
 from types import TracebackType
-from typing import Awaitable, Callable, List, Optional, Type
+from typing import Awaitable, Callable, List, Optional, Set, Type
 
 import numpy as np
 import smb
@@ -69,14 +69,16 @@ TREND_DECREASING = "decreasing"
 
 def _calculate_trends(history: List[OrderedDict], measurements_to_use: int) -> dict:
     """Calculate the trends of all data points in history data."""
-    trends = {}
-
     if measurements_to_use == -1:
         index_range = np.arange(0, len(history))
     else:
         index_range = np.arange(0, measurements_to_use)
 
-    for attribute in METRICS_TO_TREND:
+    measured_attributes: Set = set().union(*(d.keys() for d in history))
+    metrics_to_trend = measured_attributes.intersection(list(METRICS_TO_TREND))
+
+    trends = {}
+    for attribute in metrics_to_trend:
         values = [
             float(value)
             for measurement in history
