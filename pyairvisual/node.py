@@ -232,7 +232,7 @@ class NodeSamba:
             )
 
         tmp_file = tempfile.NamedTemporaryFile()
-        await self._async_get_file(f"/{history_files[0].filename}", tmp_file)
+        await self._async_get_file(f"/{history_files[-1].filename}", tmp_file)
 
         def load_history():
             """Load."""
