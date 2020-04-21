@@ -67,11 +67,15 @@ ERROR_CODES: Dict[str, Type[AirVisualError]] = {
 }
 
 
-def raise_error(error_type: str) -> None:
-    """Raise the appropriate error based on error message."""
-    error: Type[AirVisualError]
+def _raise_on_data_error(data: dict) -> None:
+    """Raise an error if the data payload suggests there is one."""
+    if "data" not in data or data.get("status") == "success":
+        return
+
+    message = data["data"]["message"]
+
     try:
-        error = next((v for k, v in ERROR_CODES.items() if k in error_type))
+        error = next((v for k, v in ERROR_CODES.items() if k in message))
     except StopIteration:
         error = AirVisualError
-    raise error(error_type)
+    raise error(message)
