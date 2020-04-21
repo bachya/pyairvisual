@@ -5,7 +5,7 @@ from typing import Optional
 from aiohttp import ClientSession, ClientTimeout
 
 from .api import API, API_URL_SCAFFOLD
-from .errors import raise_error
+from .errors import _raise_on_data_error
 from .node import Node
 from .supported import Supported
 
@@ -73,17 +73,11 @@ class Client:  # pylint: disable=too-few-public-methods
             # In some cases, the AirVisual API will return a quoted string in its
             # response body (e.g., "\"node not found\""), which is technically valid
             # JSON. Additionally, AirVisual sets that response's Content-Type header
-            # to application/json (#smh). Together, these facotrs will allow a
+            # to application/json (#smh). Together, these factors will allow a
             # non-true-JSON  payload to escape the try/except above. So, if we get
             # here, we use the string value (with quotes removed) to raise an error:
             response_text = data.replace('"', "")
             data = {"status": "fail", "data": {"message": response_text}}
 
-        _raise_on_error(data)
+        _raise_on_data_error(data)
         return data
-
-
-def _raise_on_error(data: dict) -> None:
-    """Raise the appropriate exception on error."""
-    if "status" in data and data["status"] != "success":
-        raise_error(data["data"]["message"])
