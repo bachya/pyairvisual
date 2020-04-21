@@ -5,4 +5,4 @@ numpy==1.18.2
 pysmb==1.1.28
 pytest-aiohttp==0.3.0
 pytest-cov==2.8.1
-pytest==5.3.5
+pytest==5.4.1

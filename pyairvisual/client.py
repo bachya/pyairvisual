@@ -2,23 +2,25 @@
 from json.decoder import JSONDecodeError
 from typing import Optional
 
-import aiohttp
+from aiohttp import ClientSession, ClientTimeout
 
 from .api import API, API_URL_SCAFFOLD
 from .errors import raise_error
 from .node import Node
 from .supported import Supported
 
+DEFAULT_TIMEOUT: int = 10
+
 
 class Client:  # pylint: disable=too-few-public-methods
     """Define the client."""
 
     def __init__(
-        self, websession: aiohttp.ClientSession, *, api_key: Optional[str] = None
+        self, *, api_key: Optional[str] = None, session: Optional[ClientSession] = None
     ) -> None:
         """Initialize."""
         self._api_key: Optional[str] = api_key
-        self.websession: aiohttp.ClientSession = websession
+        self._session: ClientSession = session
 
         self.api: API = API(self.request)
         self.node: Node = Node(self.request)
@@ -35,39 +37,50 @@ class Client:  # pylint: disable=too-few-public-methods
         json: Optional[dict] = None,
     ) -> dict:
         """Make a request against AirVisual."""
-        if not headers:
-            headers = {}
-        headers.update({"Content-Type": "application/json"})
+        _headers = headers or {}
+        _headers.update({"Content-Type": "application/json"})
 
-        if not params:
-            params = {}
-
+        _params = params or {}
         if self._api_key:
-            params.update({"key": self._api_key})
+            _params.update({"key": self._api_key})
 
-        async with self.websession.request(
-            method, f"{base_url}/{endpoint}", headers=headers, params=params, json=json
-        ) as resp:
-            try:
+        use_running_session = self._session and not self._session.closed
+
+        if use_running_session:
+            session = self._session
+        else:
+            session = ClientSession(timeout=ClientTimeout(total=DEFAULT_TIMEOUT))
+
+        try:
+            async with session.request(
+                method,
+                f"{base_url}/{endpoint}",
+                headers=_headers,
+                params=_params,
+                json=json,
+            ) as resp:
                 data = await resp.json(content_type=None)
-            except JSONDecodeError:
-                # The response can't be parsed as JSON, so we'll use its body text
-                # in an error:
-                response_text = await resp.text()
-                data = {"status": "fail", "data": {"message": response_text}}
+        except JSONDecodeError:
+            # The response can't be parsed as JSON, so we'll use its body text
+            # in an error:
+            response_text = await resp.text()
+            data = {"status": "fail", "data": {"message": response_text}}
+        finally:
+            if not use_running_session:
+                await session.close()
 
-            if isinstance(data, str):
-                # In some cases, the AirVisual API will return a quoted string in its
-                # response body (e.g., "\"node not found\""), which is technically valid
-                # JSON. Additionally, AirVisual sets that response's Content-Type header
-                # to application/json (#smh). Together, these facotrs will allow a
-                # non-true-JSON  payload to escape the try/except above. So, if we get
-                # here, we use the string value (with quotes removed) to raise an error:
-                response_text = data.replace('"', "")
-                data = {"status": "fail", "data": {"message": response_text}}
+        if isinstance(data, str):
+            # In some cases, the AirVisual API will return a quoted string in its
+            # response body (e.g., "\"node not found\""), which is technically valid
+            # JSON. Additionally, AirVisual sets that response's Content-Type header
+            # to application/json (#smh). Together, these facotrs will allow a
+            # non-true-JSON  payload to escape the try/except above. So, if we get
+            # here, we use the string value (with quotes removed) to raise an error:
+            response_text = data.replace('"', "")
+            data = {"status": "fail", "data": {"message": response_text}}
 
-            _raise_on_error(data)
-            return data
+        _raise_on_error(data)
+        return data
 
 
 def _raise_on_error(data: dict) -> None:

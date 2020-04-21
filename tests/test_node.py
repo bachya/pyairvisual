@@ -28,8 +28,8 @@ async def test_node_by_id(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession)
+    async with aiohttp.ClientSession() as session:
+        client = Client(session=session)
         data = await client.node.from_cloud_api(TEST_NODE_ID)
         assert data["current"]["tp"] == 2.3
         assert data["current"]["hm"] == 73
@@ -40,8 +40,8 @@ async def test_node_by_id(aresponses):
 @pytest.mark.asyncio
 async def test_node_by_samba():
     """Test getting a node's info over the local network (via Samba)."""
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession)
+    async with aiohttp.ClientSession() as session:
+        client = Client(session=session)
 
         # Mock the tempfile that current measurements get loaded into:
         measurements_response = load_fixture("node_measurements_samba_response.json")
@@ -128,8 +128,8 @@ async def test_node_by_samba_connect_errors():
 @pytest.mark.asyncio
 async def test_node_by_samba_fewer_trend_measurements():
     """Test getting a node's trends with a configured number of measurements."""
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession)
+    async with aiohttp.ClientSession() as session:
+        client = Client(session=session)
 
         # Mock the tempfile that current measurements get loaded into:
         measurements_response = load_fixture("node_measurements_samba_response.json")
@@ -262,8 +262,8 @@ async def test_node_by_samba_history_errors():
 @pytest.mark.asyncio
 async def test_node_by_samba_no_history_or_trends():
     """Test getting a node's info over the local network without history or trends."""
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession)
+    async with aiohttp.ClientSession() as session:
+        client = Client(session=session)
 
         # Mock the tempfile that current measurements get loaded into:
         measurements_response = load_fixture("node_measurements_samba_response.json")
@@ -292,8 +292,8 @@ async def test_node_by_samba_no_history_or_trends():
 @pytest.mark.asyncio
 async def test_node_by_samba_no_history_files():
     """Test the Node/Pro not having any history files where expected."""
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession)
+    async with aiohttp.ClientSession() as session:
+        client = Client(session=session)
 
         # Mock the tempfile that current measurements get loaded into:
         measurements_response = load_fixture("node_measurements_samba_response.json")
