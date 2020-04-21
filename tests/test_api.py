@@ -30,8 +30,8 @@ async def test_aqi_ranking(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.api.ranking()
         assert len(data) == 3
         assert data[0]["city"] == "Portland"
@@ -53,8 +53,8 @@ async def test_city_by_coordinates(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.api.nearest_city(
             latitude=TEST_LATITUDE, longitude=TEST_LONGITUDE
         )
@@ -77,8 +77,8 @@ async def test_city_by_ip(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.api.nearest_city()
         assert data["city"] == "Los Angeles"
         assert data["state"] == "California"
@@ -99,8 +99,8 @@ async def test_city_by_name(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.api.city(
             city=TEST_CITY, state=TEST_STATE, country=TEST_COUNTRY
         )
@@ -108,6 +108,28 @@ async def test_city_by_name(aresponses):
         assert data["city"] == "Los Angeles"
         assert data["state"] == "California"
         assert data["country"] == "USA"
+
+
+@pytest.mark.asyncio
+async def test_no_explicit_client_session(aresponses):
+    """Test not explicitly providing an aiohttp ClientSession."""
+    aresponses.add(
+        "api.airvisual.com",
+        "/v2/city_ranking",
+        "get",
+        aresponses.Response(
+            text=load_fixture("city_ranking_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
+    )
+
+    client = Client(api_key=TEST_API_KEY)
+    data = await client.api.ranking()
+    assert len(data) == 3
+    assert data[0]["city"] == "Portland"
+    assert data[0]["state"] == "Oregon"
+    assert data[0]["country"] == "USA"
 
 
 @pytest.mark.asyncio
@@ -124,8 +146,8 @@ async def test_station_by_coordinates(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.api.nearest_station(
             latitude=TEST_LATITUDE, longitude=TEST_LONGITUDE
         )
@@ -148,8 +170,8 @@ async def test_station_by_ip(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.api.nearest_station()
         assert data["city"] == "Beijing"
         assert data["state"] == "Beijing"
@@ -170,8 +192,8 @@ async def test_station_by_name(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.api.station(
             station=TEST_STATION_NAME,
             city=TEST_CITY,

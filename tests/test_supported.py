@@ -21,8 +21,8 @@ async def test_cities(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.supported.cities(TEST_COUNTRY, TEST_STATE)
         assert len(data) == 27
 
@@ -41,8 +41,8 @@ async def test_countries(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.supported.countries()
         assert len(data) == 79
 
@@ -61,8 +61,8 @@ async def test_states(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.supported.states(TEST_COUNTRY)
         assert len(data) == 6
 
@@ -81,7 +81,7 @@ async def test_stations(aresponses):
         ),
     )
 
-    async with aiohttp.ClientSession() as websession:
-        client = Client(websession, api_key=TEST_API_KEY)
+    async with aiohttp.ClientSession() as session:
+        client = Client(api_key=TEST_API_KEY, session=session)
         data = await client.supported.stations(TEST_CITY, TEST_STATE, TEST_COUNTRY)
         assert len(data) == 2

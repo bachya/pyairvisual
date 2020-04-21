@@ -11,18 +11,16 @@
 `pyairvisual` is a simple, clean, well-tested library for interacting with
 [AirVisual](https://www.airvisual.com/) to retrieve air quality information.
 
-# PLEASE READ: Version 2.0.0 and Beyond
-
-Version 2.0.0 of `pyairvisual` makes several breaking, but necessary changes:
-
-* Moves the underlying library from
-  [Requests](http://docs.python-requests.org/en/master/) to
-  [aiohttp](https://aiohttp.readthedocs.io/en/stable/)
-* Changes the entire library to use `asyncio`
-* Makes 3.6 the minimum version of Python required
-
-If you wish to continue using the previous, synchronous version of
-`pyairvisual`, make sure to pin version 1.0.0.
+- [Python Versions](#python-versions)
+- [Installation](#installation)
+- [API Key](#api-key)
+  * [Community](#community)
+  * [Startup](#startup)
+  * [Enterprise](#enterprise)
+- [Usage](#usage)
+  * [Using the Cloud API](#using-the-cloud-api)
+  * [Working with Node/Pro Units](#working-with-node-pro-units)
+- [Contributing](#contributing)
 
 # Python Versions
 
@@ -72,30 +70,8 @@ The Enterprise Plan gives access to:
 
 # Usage
 
-`pyairvisual` starts within an
-[aiohttp](https://aiohttp.readthedocs.io/en/stable/) `ClientSession`:
-
-```python
-import asyncio
-
-from aiohttp import ClientSession
-
-from pyairvisual import Client
-
-
-async def main() -> None:
-    """Create the aiohttp session and run the example."""
-    async with ClientSession() as websession:
-      # YOUR CODE HERE
-
-
-asyncio.get_event_loop().run_until_complete(main())
-```
-
 ## Using the Cloud API
 
-Getting data from the AirVisual Cloud API is easy:
-
 ```python
 import asyncio
 
@@ -106,10 +82,10 @@ from pyairvisual import Client
 
 async def main() -> None:
     """Create the aiohttp session and run the example."""
-    async with ClientSession() as websession:
+    async with ClientSession() as session:
         # If an API key isn't provided, only Nodes can be queried; everything else
         # requires an API key:
-        client = Client(websession, api_key="<YOUR_AIRVISUAL_API_KEY>")
+        client = Client(api_key="<YOUR_AIRVISUAL_API_KEY>", session=session)
 
         # Get data based on the city nearest to your IP address:
         data = await client.data.nearest_city()
@@ -143,7 +119,32 @@ async def main() -> None:
         stations = await client.supported.stations("USA", "Colorado", "Denver")
 
 
-asyncio.get_event_loop().run_until_complete(main())
+asyncio.run(main())
+```
+
+By default, the library creates a new connection to AirVisual with each coroutine. If
+you are calling a large number of coroutines (or merely want to squeeze out every second
+of runtime savings possible), an
+[`aiohttp`](https://github.com/aio-libs/aiohttp) `ClientSession` can be used for connection
+pooling:
+
+```python
+import asyncio
+
+from aiohttp import ClientSession
+
+from pyairvisual import Client
+
+
+async def main() -> None:
+    """Create the aiohttp session and run the example."""
+    async with ClientSession() as session:
+        client = Client(api_key="<YOUR_AIRVISUAL_API_KEY>", session=session)
+
+        # ...
+
+
+asyncio.run(main())
 ```
 
 ## Working with Node/Pro Units
@@ -161,15 +162,14 @@ from pyairvisual import Client
 
 async def main() -> None:
     """Create the aiohttp session and run the example."""
-    async with ClientSession() as websession:
-        client = Client(websession)
+    client = Client()
 
-        # The Node/Pro unit ID can be retrieved from the "API" section of the cloud
-        # dashboard:
-        data = await client.node.from_cloud_api("<NODE_ID>")
+    # The Node/Pro unit ID can be retrieved from the "API" section of the cloud
+    # dashboard:
+    data = await client.node.from_cloud_api("<NODE_ID>")
 
 
-asyncio.get_event_loop().run_until_complete(main())
+asyncio.run(main())
 ```
 
 ...or over the local network (the unit password can be found on the device itself):
@@ -185,24 +185,23 @@ from pyairvisual.node import NodeSamba
 
 async def main() -> None:
     """Create the aiohttp session and run the example."""
-    async with ClientSession() as websession:
-        client = Client(websession)
+    client = Client()
 
-        # Can take several optional parameters:
-        #   1. include_history: include historical measurements (defaults to True)
-        #   2. include_trends: include trends (defaults to True)
-        #   3. measurements_to_use: the number of measurements to use when calculating
-        #      trends (defaults to -1, which means "use all measurements")
-        data = await client.node.from_samba(
-            "<IP_ADDRESS_OR_HOST>",
-            "<PASSWORD>",
-            include_history=True,
-            include_trends=True,
-            measurements_to_use=10,
-        )
+    # Can take several optional parameters:
+    #   1. include_history: include historical measurements (defaults to True)
+    #   2. include_trends: include trends (defaults to True)
+    #   3. measurements_to_use: the number of measurements to use when calculating
+    #      trends (defaults to -1, which means "use all measurements")
+    data = await client.node.from_samba(
+        "<IP_ADDRESS_OR_HOST>",
+        "<PASSWORD>",
+        include_history=True,
+        include_trends=True,
+        measurements_to_use=10,
+    )
 
 
-asyncio.get_event_loop().run_until_complete(main())
+asyncio.run(main())
 ```
 
 Check out the examples, the tests, and the source files themselves for method
@@ -214,7 +213,7 @@ signatures and more examples.
   or [initiate a discussion on one](https://github.com/bachya/pyairvisual/issues/new).
 2. [Fork the repository](https://github.com/bachya/pyairvisual/fork).
 3. (_optional, but highly recommended_) Create a virtual environment: `python3 -m venv .venv`
-4. (_optional, but highly recommended_) Enter the virtual environment: `source ./venv/bin/activate`
+4. (_optional, but highly recommended_) Enter the virtual environment: `source ./.venv/bin/activate`
 5. Install the dev environment: `script/setup`
 6. Code your new feature or bug fix.
 7. Write tests that cover your new functionality.

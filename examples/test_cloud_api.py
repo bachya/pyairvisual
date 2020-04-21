@@ -15,8 +15,8 @@ API_KEY = "<API_KEY>"
 async def main() -> None:
     """Create the aiohttp session and run the example."""
     logging.basicConfig(level=logging.INFO)
-    async with ClientSession() as websession:
-        client = Client(websession, api_key=API_KEY)
+    async with ClientSession() as session:
+        client = Client(api_key=API_KEY, session=session)
 
         # Get supported locations (by location):
         try:
@@ -92,4 +92,4 @@ async def main() -> None:
             _LOGGER.error("There was an error: %s", err)
 
 
-asyncio.get_event_loop().run_until_complete(main())
+asyncio.run(main())
