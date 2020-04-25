@@ -177,6 +177,10 @@ class NodeSamba:
             raise NodeProError(f"The Node/Pro unit can't be connected to: {err}")
         except smb.base.SMBTimeout:
             raise NodeProError("Timed out while connecting to the Node/Pro unit")
+        except ConnectionRefusedError:
+            raise NodeProError(
+                f"Couldn't find a Node/Pro unit at IP address: {self._ip_or_hostname}"
+            )
 
     async def async_disconnect(self) -> None:
         """Return cloud API data from a node its ID."""
