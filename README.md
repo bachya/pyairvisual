@@ -87,22 +87,26 @@ async def main() -> None:
 
     # ...or get data based on the city nearest to a latitude/longitude:
     data = await cloud_api.air_quality.nearest_city(
-        latitude=39.742599, longitude=-104.9942557)
+        latitude=39.742599, longitude=-104.9942557
+    )
 
     # ...or get it explicitly:
     data = await cloud_api.air_quality.city(
-        city="Los Angeles", state="California", country="USA")
+        city="Los Angeles", state="California", country="USA"
+    )
 
     # If you have the appropriate API key, you can also get data based on
     # station (nearest or explicit):
     data = await cloud_api.air_quality.nearest_station()
     data = await cloud_api.air_quality.nearest_station(
-        latitude=39.742599, longitude=-104.9942557)
+        latitude=39.742599, longitude=-104.9942557
+    )
     data = await cloud_api.air_quality.station(
         station="US Embassy in Beijing",
         city="Beijing",
         state="Beijing",
-        country="China")
+        country="China",
+    )
 
     # With the appropriate API key, you can get an air quality ranking:
     data = await cloud_api.air_quality.ranking()
@@ -180,18 +184,10 @@ from pyairvisual.node import NodeSamba
 
 async def main() -> None:
     """Run!"""
-    data = await cloud_api.node.from_samba(
-        "<IP_ADDRESS_OR_HOST>",
-        "<PASSWORD>",
-        include_history=True,
-        include_trends=True,
-        measurements_to_use=10,
-    )
-
     async with NodeSamba("<IP_ADDRESS_OR_HOST>", "<PASSWORD>") as node:
         measurements = node.async_get_latest_measurements()
 
-        # Can take several optional parameters:
+        # Can take some optional parameters:
         #   1. include_trends: include trends (defaults to True)
         #   2. measurements_to_use: the number of measurements to use when calculating
         #      trends (defaults to -1, which means "use all measurements")
