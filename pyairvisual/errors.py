@@ -67,7 +67,7 @@ ERROR_CODES: Dict[str, Type[AirVisualError]] = {
 }
 
 
-def _raise_on_data_error(data: dict) -> None:
+def raise_on_data_error(data: dict) -> None:
     """Raise an error if the data payload suggests there is one."""
     if "data" not in data or data.get("status") == "success":
         return

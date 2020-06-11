@@ -1,2 +1,3 @@
 """Define public objects and methods."""
-from .client import Client  # noqa
+from .cloud_api import CloudAPI  # noqa
+from .node import NodeSamba  # noqa

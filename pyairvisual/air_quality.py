@@ -1,15 +1,13 @@
-"""Define an object to interact with the AirVisual data API."""
-from typing import Awaitable, Callable, Optional, Union
-
-API_URL_SCAFFOLD = "https://api.airvisual.com/v2"
+"""Define an object to retrieve air quality info."""
+from typing import Callable, Coroutine, Optional, Union
 
 
-class API:
-    """Define the "API" object."""
+class AirQuality:
+    """Define an object to manage air quality API calls."""
 
-    def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:
+    def __init__(self, request: Callable[..., Coroutine]) -> None:
         """Iniitialize."""
-        self._request: Callable[..., Awaitable[dict]] = request
+        self._request: Callable[..., Coroutine] = request
 
     async def _nearest(
         self,
@@ -54,7 +52,7 @@ class API:
         return data["data"]
 
     async def station(self, station: str, city: str, state: str, country: str) -> dict:
-        """Return data for the specified city."""
+        """Return data for the specified station."""
         data: dict = await self._request(
             "get",
             "station",

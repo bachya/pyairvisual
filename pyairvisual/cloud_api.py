@@ -1,63 +1,55 @@
-"""Define a client to interact with AirVisual."""
+"""Define a client to interact with the AirVisual Cloud API."""
 from json.decoder import JSONDecodeError
 from typing import Optional
 
 from aiohttp import ClientSession, ClientTimeout
 
-from .api import API, API_URL_SCAFFOLD
-from .errors import _raise_on_data_error
-from .node import Node
+from .air_quality import AirQuality
+from .const import DEFAULT_REQUEST_TIMEOUT
+from .errors import raise_on_data_error
+from .node import NodeCloudAPI
 from .supported import Supported
 
-DEFAULT_TIMEOUT: int = 10
+API_URL_BASE: str = "https://api.airvisual.com/v2"
 
 
-class Client:  # pylint: disable=too-few-public-methods
-    """Define the client."""
+class CloudAPI:  # pylint: disable=too-few-public-methods
+    """Define an object to work with the AirVisual Cloud API."""
 
     def __init__(
-        self, *, api_key: Optional[str] = None, session: Optional[ClientSession] = None
+        self, api_key: str, *, session: Optional[ClientSession] = None
     ) -> None:
         """Initialize."""
         self._api_key: Optional[str] = api_key
         self._session: ClientSession = session
 
-        self.api: API = API(self.request)
-        self.node: Node = Node(self.request)
-        self.supported: Supported = Supported(self.request)
+        self.air_quality: AirQuality = AirQuality(self._request)
+        self.node: NodeCloudAPI = NodeCloudAPI(self._request)
+        self.supported: Supported = Supported(self._request)
 
-    async def request(
-        self,
-        method: str,
-        endpoint: str,
-        *,
-        base_url: str = API_URL_SCAFFOLD,
-        headers: Optional[dict] = None,
-        params: Optional[dict] = None,
-        json: Optional[dict] = None,
+    async def _request(
+        self, method: str, endpoint: str, *, base_url: str = API_URL_BASE, **kwargs
     ) -> dict:
-        """Make a request against AirVisual."""
-        _headers = headers or {}
-        _headers.update({"Content-Type": "application/json"})
+        """Make a request against the API."""
+        kwargs.setdefault("headers", {})
+        kwargs["headers"]["Content-Type"] = "application/json"
 
-        _params = params or {}
-        if self._api_key:
-            _params.update({"key": self._api_key})
+        kwargs.setdefault("params", {})
+        kwargs["params"]["key"] = self._api_key
 
         use_running_session = self._session and not self._session.closed
 
+        session: ClientSession
         if use_running_session:
             session = self._session
         else:
-            session = ClientSession(timeout=ClientTimeout(total=DEFAULT_TIMEOUT))
+            session = ClientSession(
+                timeout=ClientTimeout(total=DEFAULT_REQUEST_TIMEOUT)
+            )
 
         try:
             async with session.request(
-                method,
-                f"{base_url}/{endpoint}",
-                headers=_headers,
-                params=_params,
-                json=json,
+                method, f"{base_url}/{endpoint}", **kwargs
             ) as resp:
                 data = await resp.json(content_type=None)
         except JSONDecodeError:
@@ -79,5 +71,6 @@ class Client:  # pylint: disable=too-few-public-methods
             response_text = data.replace('"', "")
             data = {"status": "fail", "data": {"message": response_text}}
 
-        _raise_on_data_error(data)
+        raise_on_data_error(data)
+
         return data

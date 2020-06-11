@@ -1,13 +1,13 @@
 """Define a series of endpoints for what locations are supported."""
-from typing import Awaitable, Callable
+from typing import Callable, Coroutine
 
 
 class Supported:
-    """Define the "Supported" object."""
+    """Define an object to supported location API calls."""
 
-    def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:
+    def __init__(self, request: Callable[..., Coroutine]) -> None:
         """Iniitialize."""
-        self._request: Callable[..., Awaitable[dict]] = request
+        self._request: Callable[..., Coroutine] = request
 
     async def cities(self, country: str, state: str) -> list:
         """Return a list of supported cities in a country/state."""

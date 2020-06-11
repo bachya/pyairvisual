@@ -1,8 +1,8 @@
-"""Define tests for the "Data" object."""
+"""Define tests for the AirVisual Cloud API."""
 import aiohttp
 import pytest
 
-from pyairvisual import Client
+from pyairvisual import CloudAPI
 
 from .common import (
     TEST_API_KEY,
@@ -31,12 +31,32 @@ async def test_aqi_ranking(aresponses):
     )
 
     async with aiohttp.ClientSession() as session:
-        client = Client(api_key=TEST_API_KEY, session=session)
-        data = await client.api.ranking()
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.air_quality.ranking()
         assert len(data) == 3
         assert data[0]["city"] == "Portland"
         assert data[0]["state"] == "Oregon"
         assert data[0]["country"] == "USA"
+
+
+@pytest.mark.asyncio
+async def test_cities(aresponses):
+    """Test getting a list of supported cities."""
+    aresponses.add(
+        "api.airvisual.com",
+        "/v2/cities",
+        "get",
+        aresponses.Response(
+            text=load_fixture("cities_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
+    )
+
+    async with aiohttp.ClientSession() as session:
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.supported.cities(TEST_COUNTRY, TEST_STATE)
+        assert len(data) == 27
 
 
 @pytest.mark.asyncio
@@ -54,8 +74,8 @@ async def test_city_by_coordinates(aresponses):
     )
 
     async with aiohttp.ClientSession() as session:
-        client = Client(api_key=TEST_API_KEY, session=session)
-        data = await client.api.nearest_city(
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.air_quality.nearest_city(
             latitude=TEST_LATITUDE, longitude=TEST_LONGITUDE
         )
         assert data["city"] == "Los Angeles"
@@ -78,8 +98,8 @@ async def test_city_by_ip(aresponses):
     )
 
     async with aiohttp.ClientSession() as session:
-        client = Client(api_key=TEST_API_KEY, session=session)
-        data = await client.api.nearest_city()
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.air_quality.nearest_city()
         assert data["city"] == "Los Angeles"
         assert data["state"] == "California"
         assert data["country"] == "USA"
@@ -100,14 +120,34 @@ async def test_city_by_name(aresponses):
     )
 
     async with aiohttp.ClientSession() as session:
-        client = Client(api_key=TEST_API_KEY, session=session)
-        data = await client.api.city(
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.air_quality.city(
             city=TEST_CITY, state=TEST_STATE, country=TEST_COUNTRY
         )
 
         assert data["city"] == "Los Angeles"
         assert data["state"] == "California"
         assert data["country"] == "USA"
+
+
+@pytest.mark.asyncio
+async def test_countries(aresponses):
+    """Test getting a list of supported countries."""
+    aresponses.add(
+        "api.airvisual.com",
+        "/v2/countries",
+        "get",
+        aresponses.Response(
+            text=load_fixture("countries_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
+    )
+
+    async with aiohttp.ClientSession() as session:
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.supported.countries()
+        assert len(data) == 79
 
 
 @pytest.mark.asyncio
@@ -124,12 +164,32 @@ async def test_no_explicit_client_session(aresponses):
         ),
     )
 
-    client = Client(api_key=TEST_API_KEY)
-    data = await client.api.ranking()
+    cloud_api = CloudAPI(TEST_API_KEY)
+    data = await cloud_api.air_quality.ranking()
     assert len(data) == 3
     assert data[0]["city"] == "Portland"
     assert data[0]["state"] == "Oregon"
     assert data[0]["country"] == "USA"
+
+
+@pytest.mark.asyncio
+async def test_states(aresponses):
+    """Test getting a list of supported states."""
+    aresponses.add(
+        "api.airvisual.com",
+        "/v2/states",
+        "get",
+        aresponses.Response(
+            text=load_fixture("states_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
+    )
+
+    async with aiohttp.ClientSession() as session:
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.supported.states(TEST_COUNTRY)
+        assert len(data) == 6
 
 
 @pytest.mark.asyncio
@@ -147,8 +207,8 @@ async def test_station_by_coordinates(aresponses):
     )
 
     async with aiohttp.ClientSession() as session:
-        client = Client(api_key=TEST_API_KEY, session=session)
-        data = await client.api.nearest_station(
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.air_quality.nearest_station(
             latitude=TEST_LATITUDE, longitude=TEST_LONGITUDE
         )
         assert data["city"] == "Beijing"
@@ -171,8 +231,8 @@ async def test_station_by_ip(aresponses):
     )
 
     async with aiohttp.ClientSession() as session:
-        client = Client(api_key=TEST_API_KEY, session=session)
-        data = await client.api.nearest_station()
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.air_quality.nearest_station()
         assert data["city"] == "Beijing"
         assert data["state"] == "Beijing"
         assert data["country"] == "China"
@@ -193,8 +253,8 @@ async def test_station_by_name(aresponses):
     )
 
     async with aiohttp.ClientSession() as session:
-        client = Client(api_key=TEST_API_KEY, session=session)
-        data = await client.api.station(
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.air_quality.station(
             station=TEST_STATION_NAME,
             city=TEST_CITY,
             state=TEST_STATE,
@@ -203,3 +263,23 @@ async def test_station_by_name(aresponses):
         assert data["city"] == "Beijing"
         assert data["state"] == "Beijing"
         assert data["country"] == "China"
+
+
+@pytest.mark.asyncio
+async def test_stations(aresponses):
+    """Test getting a list of supported stations."""
+    aresponses.add(
+        "api.airvisual.com",
+        "/v2/stations",
+        "get",
+        aresponses.Response(
+            text=load_fixture("stations_response.json"),
+            headers={"Content-Type": "application/json"},
+            status=200,
+        ),
+    )
+
+    async with aiohttp.ClientSession() as session:
+        cloud_api = CloudAPI(TEST_API_KEY, session=session)
+        data = await cloud_api.supported.stations(TEST_CITY, TEST_STATE, TEST_COUNTRY)
+        assert len(data) == 2

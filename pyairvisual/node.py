@@ -1,4 +1,4 @@
-"""Define an object to interact with an AirVisual Node/Pro."""
+"""Define objects to interact with an AirVisual Node/Pro."""
 # pylint: disable=too-few-public-methods
 import asyncio
 from collections import OrderedDict
@@ -7,7 +7,7 @@ import json
 import logging
 import tempfile
 from types import TracebackType
-from typing import Awaitable, Callable, List, Optional, Set, Type
+from typing import Callable, Coroutine, List, Optional, Set, Type
 
 import numpy as np
 import smb
@@ -15,7 +15,7 @@ from smb.SMBConnection import SMBConnection
 
 from .errors import NodeProError
 
-NODE_URL_SCAFFOLD = "https://www.airvisual.com/api/v2/node"
+API_URL_BASE = "https://www.airvisual.com/api/v2/node"
 
 SAMBA_HISTORY_PATTERN = "*_AirVisual_values.txt"
 SMB_SERVICE = "airvisual"
@@ -111,15 +111,15 @@ def _get_normalized_metric_name(key: str) -> str:
 
 
 class NodeCloudAPI:
-    """Define an object to work with getting Node info via the cloud API."""
+    """Define an object to work with getting Node info via the Cloud API."""
 
-    def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:
+    def __init__(self, request: Callable[..., Coroutine]) -> None:
         """Initialize."""
-        self._request: Callable[..., Awaitable[dict]] = request
+        self._request: Callable[..., Coroutine] = request
 
-    async def async_get_by_node_id(self, node_id: str) -> dict:
+    async def get_by_node_id(self, node_id: str) -> dict:
         """Return cloud API data from a node its ID."""
-        return await self._request("get", node_id, base_url=NODE_URL_SCAFFOLD)
+        return await self._request("get", node_id, base_url=API_URL_BASE)
 
 
 class NodeSamba:
@@ -211,7 +211,9 @@ class NodeSamba:
 
         return data
 
-    async def async_get_history(self) -> List[OrderedDict]:
+    async def async_get_history(
+        self, *, include_trends: bool = True, measurements_to_use: int = -1
+    ) -> dict:
         """Get history data from the device."""
 
         def search_history():
@@ -252,44 +254,12 @@ class NodeSamba:
                     data.append(_data)
             return data
 
-        history = await self._loop.run_in_executor(None, load_history)
-
-        return history
-
-
-class Node:
-    """Define the "Node" object."""
-
-    def __init__(self, request: Callable[..., Awaitable[dict]]) -> None:
-        """Initialize."""
-        self._cloud_api = NodeCloudAPI(request)
-
-    async def from_cloud_api(self, node_id: str) -> dict:
-        """Return cloud API data from a node its ID."""
-        return await self._cloud_api.async_get_by_node_id(node_id)
-
-    async def from_samba(
-        self,
-        ip_or_hostname: str,
-        password: str,
-        *,
-        include_history: bool = True,
-        include_trends: bool = True,
-        measurements_to_use: int = -1,
-    ) -> dict:
-        """Return local data from a node (via Samba)."""
         data = {}
 
-        async with NodeSamba(ip_or_hostname, password) as node:
-            data["current"] = await node.async_get_latest_measurements()
-
-            if not include_history and not include_trends:
-                return data
-
-            history = await node.async_get_history()
-            if include_history:
-                data["history"] = history  # type: ignore
-            if include_trends:
-                data["trends"] = _calculate_trends(history, measurements_to_use)
+        data["measurements"] = await self._loop.run_in_executor(None, load_history)
+        if include_trends:
+            data["trends"] = _calculate_trends(
+                data["measurements"], measurements_to_use
+            )
 
         return data
