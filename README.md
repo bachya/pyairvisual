@@ -75,48 +75,43 @@ The Enterprise Plan gives access to:
 ```python
 import asyncio
 
-from aiohttp import ClientSession
-
-from pyairvisual import Client
+from pyairvisual import CloudAPI
 
 
 async def main() -> None:
-    """Create the aiohttp session and run the example."""
-    async with ClientSession() as session:
-        # If an API key isn't provided, only Nodes can be queried; everything else
-        # requires an API key:
-        client = Client(api_key="<YOUR_AIRVISUAL_API_KEY>", session=session)
+    """Run!"""
+    cloud_api = CloudAPI("<YOUR_AIRVISUAL_API_KEY>")
 
-        # Get data based on the city nearest to your IP address:
-        data = await client.data.nearest_city()
+    # Get data based on the city nearest to your IP address:
+    data = await cloud_api.air_quality.nearest_city()
 
-        # ...or get data based on the city nearest to a latitude/longitude:
-        data = await client.data.nearest_city(
-            latitude=39.742599, longitude=-104.9942557)
+    # ...or get data based on the city nearest to a latitude/longitude:
+    data = await cloud_api.air_quality.nearest_city(
+        latitude=39.742599, longitude=-104.9942557)
 
-        # ...or get it explicitly:
-        data = await client.data.city(
-            city="Los Angeles", state="California", country="USA")
+    # ...or get it explicitly:
+    data = await cloud_api.air_quality.city(
+        city="Los Angeles", state="California", country="USA")
 
-        # If you have the appropriate API key, you can also get data based on
-        # station (nearest or explicit):
-        data = await client.data.nearest_station()
-        data = await client.data.nearest_station(
-            latitude=39.742599, longitude=-104.9942557)
-        data = await client.data.station(
-            station="US Embassy in Beijing",
-            city="Beijing",
-            state="Beijing",
-            country="China")
+    # If you have the appropriate API key, you can also get data based on
+    # station (nearest or explicit):
+    data = await cloud_api.air_quality.nearest_station()
+    data = await cloud_api.air_quality.nearest_station(
+        latitude=39.742599, longitude=-104.9942557)
+    data = await cloud_api.air_quality.station(
+        station="US Embassy in Beijing",
+        city="Beijing",
+        state="Beijing",
+        country="China")
 
-        # With the appropriate API key, you can get an air quality ranking:
-        data = await client.data.ranking()
+    # With the appropriate API key, you can get an air quality ranking:
+    data = await cloud_api.air_quality.ranking()
 
-        # pyairvisual gives you several methods to look locations up:
-        countries = await client.supported.countries()
-        states = await client.supported.states("USA")
-        cities = await client.supported.cities("USA", "Colorado")
-        stations = await client.supported.stations("USA", "Colorado", "Denver")
+    # pyairvisual gives you several methods to look locations up:
+    countries = await cloud_api.supported.countries()
+    states = await cloud_api.supported.states("USA")
+    cities = await cloud_api.supported.cities("USA", "Colorado")
+    stations = await cloud_api.supported.stations("USA", "Colorado", "Denver")
 
 
 asyncio.run(main())
@@ -133,13 +128,13 @@ import asyncio
 
 from aiohttp import ClientSession
 
-from pyairvisual import Client
+from pyairvisual import CloudAPI
 
 
 async def main() -> None:
-    """Create the aiohttp session and run the example."""
+    """Run!"""
     async with ClientSession() as session:
-        client = Client(api_key="<YOUR_AIRVISUAL_API_KEY>", session=session)
+        cloud_api = CloudAPI("<YOUR_AIRVISUAL_API_KEY>", session=session)
 
         # ...
 
@@ -157,48 +152,50 @@ import asyncio
 
 from aiohttp import ClientSession
 
-from pyairvisual import Client
+from pyairvisual import CloudAPI
 
 
 async def main() -> None:
-    """Create the aiohttp session and run the example."""
-    client = Client()
+    """Run!"""
+    cloud_api = CloudAPI("<YOUR_AIRVISUAL_API_KEY>")
 
     # The Node/Pro unit ID can be retrieved from the "API" section of the cloud
     # dashboard:
-    data = await client.node.from_cloud_api("<NODE_ID>")
+    data = await cloud_api.node.get_by_node_id("<NODE_ID>")
 
 
 asyncio.run(main())
 ```
 
-...or over the local network (the unit password can be found on the device itself):
+...or over the local network via Samba (the unit password can be found on the device
+itself):
 
 ```python
 import asyncio
 
 from aiohttp import ClientSession
 
-from pyairvisual import Client
 from pyairvisual.node import NodeSamba
 
 
 async def main() -> None:
-    """Create the aiohttp session and run the example."""
-    client = Client()
-
-    # Can take several optional parameters:
-    #   1. include_history: include historical measurements (defaults to True)
-    #   2. include_trends: include trends (defaults to True)
-    #   3. measurements_to_use: the number of measurements to use when calculating
-    #      trends (defaults to -1, which means "use all measurements")
-    data = await client.node.from_samba(
+    """Run!"""
+    data = await cloud_api.node.from_samba(
         "<IP_ADDRESS_OR_HOST>",
         "<PASSWORD>",
         include_history=True,
         include_trends=True,
         measurements_to_use=10,
     )
+
+    async with NodeSamba("<IP_ADDRESS_OR_HOST>", "<PASSWORD>") as node:
+        measurements = node.async_get_latest_measurements()
+
+        # Can take several optional parameters:
+        #   1. include_trends: include trends (defaults to True)
+        #   2. measurements_to_use: the number of measurements to use when calculating
+        #      trends (defaults to -1, which means "use all measurements")
+        history = node.async_get_history()
 
 
 asyncio.run(main())

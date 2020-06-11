@@ -1,8 +1,8 @@
 """Define tests for various errors."""
-import aiohttp
+from aiohttp import ClientSession
 import pytest
 
-from pyairvisual import Client
+from pyairvisual import CloudAPI
 from pyairvisual.errors import (
     AirVisualError,
     InvalidKeyError,
@@ -32,9 +32,9 @@ async def test_api_key_expired(aresponses):
     )
 
     with pytest.raises(KeyExpiredError):
-        async with aiohttp.ClientSession() as session:
-            client = Client(api_key=TEST_API_KEY, session=session)
-            await client.api.nearest_city()
+        async with ClientSession() as session:
+            cloud_api = CloudAPI(TEST_API_KEY, session=session)
+            await cloud_api.air_quality.nearest_city()
 
 
 @pytest.mark.asyncio
@@ -52,9 +52,9 @@ async def test_call_limit_reached(aresponses):
     )
 
     with pytest.raises(LimitReachedError):
-        async with aiohttp.ClientSession() as session:
-            client = Client(api_key=TEST_API_KEY, session=session)
-            await client.api.nearest_city()
+        async with ClientSession() as session:
+            cloud_api = CloudAPI(TEST_API_KEY, session=session)
+            await cloud_api.air_quality.nearest_city()
 
 
 @pytest.mark.asyncio
@@ -72,9 +72,9 @@ async def test_city_not_found(aresponses):
     )
 
     with pytest.raises(NotFoundError):
-        async with aiohttp.ClientSession() as session:
-            client = Client(api_key=TEST_API_KEY, session=session)
-            await client.api.nearest_city()
+        async with ClientSession() as session:
+            cloud_api = CloudAPI(TEST_API_KEY, session=session)
+            await cloud_api.air_quality.nearest_city()
 
 
 @pytest.mark.asyncio
@@ -92,9 +92,9 @@ async def test_generic_error(aresponses):
     )
 
     with pytest.raises(AirVisualError):
-        async with aiohttp.ClientSession() as session:
-            client = Client(api_key=TEST_API_KEY, session=session)
-            await client.api.nearest_city()
+        async with ClientSession() as session:
+            cloud_api = CloudAPI(TEST_API_KEY, session=session)
+            await cloud_api.air_quality.nearest_city()
 
 
 @pytest.mark.asyncio
@@ -112,9 +112,9 @@ async def test_incorrect_api_key(aresponses):
     )
 
     with pytest.raises(InvalidKeyError):
-        async with aiohttp.ClientSession() as session:
-            client = Client(api_key=TEST_API_KEY, session=session)
-            await client.api.nearest_city()
+        async with ClientSession() as session:
+            cloud_api = CloudAPI(TEST_API_KEY, session=session)
+            await cloud_api.air_quality.nearest_city()
 
 
 @pytest.mark.asyncio
@@ -132,9 +132,9 @@ async def test_no_nearest_station(aresponses):
     )
 
     with pytest.raises(NoStationError):
-        async with aiohttp.ClientSession() as session:
-            client = Client(api_key=TEST_API_KEY, session=session)
-            await client.api.nearest_station()
+        async with ClientSession() as session:
+            cloud_api = CloudAPI(TEST_API_KEY, session=session)
+            await cloud_api.air_quality.nearest_station()
 
 
 @pytest.mark.asyncio
@@ -152,9 +152,9 @@ async def test_node_not_found(aresponses):
     )
 
     with pytest.raises(NodeProError):
-        async with aiohttp.ClientSession() as session:
-            client = Client(session=session)
-            await client.node.from_cloud_api("12345")
+        async with ClientSession() as session:
+            cloud_api = CloudAPI(TEST_API_KEY, session=session)
+            await cloud_api.node.get_by_node_id("12345")
 
 
 @pytest.mark.asyncio
@@ -172,9 +172,9 @@ async def test_non_json_response(aresponses):
     )
 
     with pytest.raises(AirVisualError):
-        async with aiohttp.ClientSession() as session:
-            client = Client(session=session)
-            await client.node.from_cloud_api("12345")
+        async with ClientSession() as session:
+            cloud_api = CloudAPI(TEST_API_KEY, session=session)
+            await cloud_api.node.get_by_node_id("12345")
 
 
 @pytest.mark.asyncio
@@ -192,6 +192,6 @@ async def test_permission_denied(aresponses):
     )
 
     with pytest.raises(UnauthorizedError):
-        async with aiohttp.ClientSession() as session:
-            client = Client(api_key=TEST_API_KEY, session=session)
-            await client.api.nearest_station()
+        async with ClientSession() as session:
+            cloud_api = CloudAPI(TEST_API_KEY, session=session)
+            await cloud_api.air_quality.nearest_station()
