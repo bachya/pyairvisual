@@ -171,7 +171,8 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-...or over the local network via Samba (the unit password can be found on the device
+...or over the local network via Samba (the unit password can be found
+[on the device](https://support.airvisual.com/en/articles/3029331-download-the-airvisual-node-pro-s-data-using-samba)
 itself):
 
 ```python
