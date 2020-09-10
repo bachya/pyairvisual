@@ -3,7 +3,6 @@ import tempfile
 from unittest.mock import MagicMock, PropertyMock, mock_open
 
 import aiohttp
-from asynctest import patch
 import pytest
 import smb
 
@@ -11,7 +10,8 @@ from pyairvisual import CloudAPI
 from pyairvisual.errors import NodeProError
 from pyairvisual.node import NodeSamba
 
-from .common import (
+from tests.async_mock import patch
+from tests.common import (
     TEST_API_KEY,
     TEST_NODE_ID,
     TEST_NODE_IP_ADDRESS,
