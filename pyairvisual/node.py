@@ -200,6 +200,9 @@ class NodeSamba:
         tmp_file.close()
 
         data = json.loads(raw.decode())
+
+        _LOGGER.debug("Node Pro measurements loaded: %s", data)
+
         data["measurements"] = {
             _get_normalized_metric_name(pollutant): value
             for pollutant, value in data["measurements"][0].items()
@@ -252,6 +255,9 @@ class NodeSamba:
                     for header, value in row.items():
                         _data[_get_normalized_metric_name(header)] = value
                     data.append(_data)
+
+            _LOGGER.debug("Node Pro history loaded: %s", data)
+
             return data
 
         data = {}
