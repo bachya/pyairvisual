@@ -203,9 +203,16 @@ class NodeSamba:
 
         _LOGGER.debug("Node Pro measurements loaded: %s", data)
 
+        try:
+            # Handle a single measurement returned in a list:
+            measurements = data["measurements"][0].items()
+        except KeyError:
+            # Handle a single measurement returned as a standalone dict:
+            measurements = data["measurements"].items()
+
         data["measurements"] = {
             _get_normalized_metric_name(pollutant): value
-            for pollutant, value in data["measurements"][0].items()
+            for pollutant, value in measurements
         }
         data["status"]["sensor_life"] = {
             _get_normalized_metric_name(pollutant): value
