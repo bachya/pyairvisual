@@ -214,10 +214,12 @@ class NodeSamba:
             _get_normalized_metric_name(pollutant): value
             for pollutant, value in measurements
         }
-        data["status"]["sensor_life"] = {
-            _get_normalized_metric_name(pollutant): value
-            for pollutant, value in data["status"]["sensor_life"].items()
-        }
+
+        if "sensor_life" in data["status"]:
+            data["status"]["sensor_life"] = {
+                _get_normalized_metric_name(pollutant): value
+                for pollutant, value in data["status"]["sensor_life"].items()
+            }
 
         return data
 
