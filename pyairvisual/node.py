@@ -214,10 +214,12 @@ class NodeSamba:
             _get_normalized_metric_name(pollutant): value
             for pollutant, value in measurements
         }
-        data["status"]["sensor_life"] = {
-            _get_normalized_metric_name(pollutant): value
-            for pollutant, value in data["status"]["sensor_life"].items()
-        }
+
+        if "sensor_life" in data["status"]:
+            data["status"]["sensor_life"] = {
+                _get_normalized_metric_name(pollutant): value
+                for pollutant, value in data["status"]["sensor_life"].items()
+            }
 
         return data
 
@@ -258,10 +260,12 @@ class NodeSamba:
             with open(tmp_file.name) as file:
                 reader = csv.DictReader(file, delimiter=";")
                 for row in reader:
-                    _data = {}
-                    for header, value in row.items():
-                        _data[_get_normalized_metric_name(header)] = value
-                    data.append(_data)
+                    data.append(
+                        {
+                            _get_normalized_metric_name(header): value
+                            for header, value in row.items()
+                        }
+                    )
 
             _LOGGER.debug("Node Pro history loaded: %s", data)
 

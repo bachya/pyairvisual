@@ -1,6 +1,5 @@
 """Define a client to interact with the AirVisual Cloud API."""
 from json.decoder import JSONDecodeError
-from typing import Optional
 
 from aiohttp import ClientSession, ClientTimeout
 
@@ -16,11 +15,9 @@ API_URL_BASE: str = "https://api.airvisual.com/v2"
 class CloudAPI:  # pylint: disable=too-few-public-methods
     """Define an object to work with the AirVisual Cloud API."""
 
-    def __init__(
-        self, api_key: str, *, session: Optional[ClientSession] = None
-    ) -> None:
+    def __init__(self, api_key: str, session: ClientSession = None) -> None:
         """Initialize."""
-        self._api_key: Optional[str] = api_key
+        self._api_key: str = api_key
         self._session: ClientSession = session
 
         self.air_quality: AirQuality = AirQuality(self._request)
