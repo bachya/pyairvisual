@@ -20,7 +20,7 @@ class CloudAPI:  # pylint: disable=too-few-public-methods
         self, api_key: str, *, session: Optional[ClientSession] = None
     ) -> None:
         """Initialize."""
-        self._api_key: Optional[str] = api_key
+        self._api_key: str = api_key
         self._session: ClientSession = session
 
         self.air_quality: AirQuality = AirQuality(self._request)
