@@ -260,9 +260,11 @@ class NodeSamba:
             with open(tmp_file.name) as file:
                 reader = csv.DictReader(file, delimiter=";")
                 for row in reader:
-                    _data = {}
-                    for header, value in row.items():
-                        _data[_get_normalized_metric_name(header)] = value
+                    _data = {
+                        _get_normalized_metric_name(header): value
+                        for header, value in row.items()
+                    }
+
                     data.append(_data)
 
             _LOGGER.debug("Node Pro history loaded: %s", data)
