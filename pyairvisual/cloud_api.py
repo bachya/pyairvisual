@@ -16,12 +16,10 @@ API_URL_BASE: str = "https://api.airvisual.com/v2"
 class CloudAPI:  # pylint: disable=too-few-public-methods
     """Define an object to work with the AirVisual Cloud API."""
 
-    def __init__(
-        self, api_key: str, *, session: Optional[ClientSession] = None
-    ) -> None:
+    def __init__(self, api_key: str, session: Optional[ClientSession] = None) -> None:
         """Initialize."""
         self._api_key: str = api_key
-        self._session: ClientSession = session
+        self._session: Optional[ClientSession] = session
 
         self.air_quality: AirQuality = AirQuality(self._request)
         self.node: NodeCloudAPI = NodeCloudAPI(self._request)
