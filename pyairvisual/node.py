@@ -210,6 +210,8 @@ class NodeSamba:
             # Handle a single measurement returned as a standalone dict:
             measurements = data["measurements"].items()
 
+        data["last_measurement_timestamp"] = int(data["date_and_time"]["timestamp"])
+
         data["measurements"] = {
             _get_normalized_metric_name(pollutant): value
             for pollutant, value in measurements

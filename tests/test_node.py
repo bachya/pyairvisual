@@ -112,6 +112,7 @@ async def test_node_by_samba_dict_response():
             measurements = await node.async_get_latest_measurements()
             history = await node.async_get_history()
 
+        assert measurements["last_measurement_timestamp"] == 1584204767
         assert measurements["measurements"]["co2"] == "442"
         assert measurements["measurements"]["humidity"] == "35"
         assert measurements["measurements"]["pm0_1"] == "3"
@@ -306,6 +307,7 @@ async def test_node_by_samba_list_response():
             measurements = await node.async_get_latest_measurements()
             history = await node.async_get_history()
 
+        assert measurements["last_measurement_timestamp"] == 1584204767
         assert measurements["measurements"]["co2"] == "442"
         assert measurements["measurements"]["humidity"] == "35"
         assert measurements["measurements"]["pm0_1"] == "3"
