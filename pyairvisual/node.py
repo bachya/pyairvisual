@@ -128,6 +128,7 @@ class NodeSamba:
     def __init__(self, ip_or_hostname: str, password: str) -> None:
         """Initialize."""
         self._conn = SMBConnection(SMB_USERNAME, password, "pyairvisual", SMB_SERVICE)
+        self._connected = False
         self._ip_or_hostname = ip_or_hostname
         self._latest_history = None
         self._loop = asyncio.get_event_loop()
@@ -146,6 +147,26 @@ class NodeSamba:
         """Handle the end of a context manager."""
         await self.async_disconnect()
 
+    async def _async_execute_samba_command(self, func: Callable):
+        """Execute (and catch errors with) a Samba command."""
+        try:
+            result = await self._loop.run_in_executor(None, func)
+        except smb.base.NotReadyError as err:
+            raise NodeProError(f"The Node/Pro unit returned an error: {err}") from None
+        except smb.base.SMBTimeout:
+            raise NodeProError("Timed out while talking to the Node/Pro unit") from None
+        except ConnectionRefusedError:
+            raise NodeProError(
+                f"Couldn't find a Node/Pro unit at IP address: {self._ip_or_hostname}"
+            ) from None
+        except Exception as err:  # pylint: disable=broad-except
+            raise NodeProError(err) from None
+
+        if result is False:
+            raise NodeProError("No data or results returned") from None
+
+        return result
+
     async def _async_get_file(
         self, filepath: str, file_obj: tempfile.NamedTemporaryFile,  # type: ignore
     ) -> None:
@@ -153,43 +174,30 @@ class NodeSamba:
 
         def get():
             """Get the file."""
-            self._conn.retrieveFile(SMB_SERVICE, filepath, file_obj)
+            return self._conn.retrieveFile(SMB_SERVICE, filepath, file_obj)
 
-        try:
-            await self._loop.run_in_executor(None, get)
-        except smb.base.NotConnectedError as err:
-            raise NodeProError(f"The connection to the Node/Pro unit broke: {err}")
-        except smb.base.SMBTimeout:
-            raise NodeProError("Timed out retrieving {filepath}")
-        except Exception as err:  # pylint: disable=broad-except
-            raise NodeProError(f"Error while retrieving {filepath}: {err}")
+        await self._async_execute_samba_command(get)
 
     async def async_connect(self) -> None:
         """Return cloud API data from a node its ID."""
 
         def connect():
             """Connect."""
-            self._conn.connect(self._ip_or_hostname)
+            return self._conn.connect(self._ip_or_hostname)
 
-        try:
-            await self._loop.run_in_executor(None, connect)
-        except smb.base.NotReadyError as err:
-            raise NodeProError(f"The Node/Pro unit can't be connected to: {err}")
-        except smb.base.SMBTimeout:
-            raise NodeProError("Timed out while connecting to the Node/Pro unit")
-        except ConnectionRefusedError:
-            raise NodeProError(
-                f"Couldn't find a Node/Pro unit at IP address: {self._ip_or_hostname}"
-            )
+        await self._async_execute_samba_command(connect)
+        self._connected = True
 
     async def async_disconnect(self) -> None:
         """Return cloud API data from a node its ID."""
 
         def disconnect():
             """Connect."""
-            self._conn.close()
+            return self._conn.close()
 
-        await self._loop.run_in_executor(None, disconnect)
+        if self._connected:
+            await self._async_execute_samba_command(disconnect)
+            self._connected = False
 
     async def async_get_latest_measurements(self) -> dict:
         """Get the latest measurements from the device."""
@@ -231,21 +239,14 @@ class NodeSamba:
 
         def search_history():
             """Search for the most recent history file."""
-            try:
-                return self._conn.listPath(
-                    SMB_SERVICE,
-                    "/",
-                    search=smb.smb_constants.SMB_FILE_ATTRIBUTE_NORMAL,
-                    pattern=SAMBA_HISTORY_PATTERN,
-                )
-            except smb.base.NotConnectedError as err:
-                raise NodeProError(f"The connection to the Node/Pro unit broke: {err}")
-            except smb.base.SMBTimeout:
-                raise NodeProError("Timed out retrieving current history data")
-            except Exception as err:  # pylint: disable=broad-except
-                raise NodeProError(f"Error while retrieving history data: {err}")
+            return self._conn.listPath(
+                SMB_SERVICE,
+                "/",
+                search=smb.smb_constants.SMB_FILE_ATTRIBUTE_NORMAL,
+                pattern=SAMBA_HISTORY_PATTERN,
+            )
 
-        history_files = await self._loop.run_in_executor(None, search_history)
+        history_files = await self._async_execute_samba_command(search_history)
 
         if not history_files:
             raise NodeProError(

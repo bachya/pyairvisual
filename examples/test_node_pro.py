@@ -15,12 +15,12 @@ async def main() -> None:
     """Create the aiohttp session and run the example."""
     logging.basicConfig(level=logging.INFO)
 
-    async with NodeSamba(NODE_PRO_IP_ADDRESS, NODE_PRO_PASSWORD) as node:
-        try:
+    try:
+        async with NodeSamba(NODE_PRO_IP_ADDRESS, NODE_PRO_PASSWORD) as node:
             _LOGGER.info(await node.async_get_latest_measurements())
             _LOGGER.info(await node.async_get_history())
-        except NodeProError as err:
-            _LOGGER.error("There was an error: %s", err)
+    except NodeProError as err:
+        _LOGGER.error(err)
 
 
 asyncio.run(main())

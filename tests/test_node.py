@@ -53,14 +53,14 @@ async def test_node_by_samba_connect_errors():
     ):
         with pytest.raises(NodeProError) as err:
             await node.async_connect()
-        assert "The Node/Pro unit can't be connected to: " in str(err)
+        assert "The Node/Pro unit returned an error: " in str(err)
 
     with patch(
         "smb.SMBConnection.SMBConnection.connect", side_effect=smb.base.SMBTimeout,
     ):
         with pytest.raises(NodeProError) as err:
             await node.async_connect()
-        assert "Timed out while connecting to the Node/Pro unit" in str(err)
+        assert "Timed out while talking to the Node/Pro unit" in str(err)
 
     with patch(
         "smb.SMBConnection.SMBConnection.connect", side_effect=ConnectionRefusedError,
@@ -68,6 +68,13 @@ async def test_node_by_samba_connect_errors():
         with pytest.raises(NodeProError) as err:
             await node.async_connect()
         assert "Couldn't find a Node/Pro unit at IP address: 192.168.1.100" in str(err)
+
+    with patch(
+        "smb.SMBConnection.SMBConnection.connect", return_value=False,
+    ):
+        with pytest.raises(NodeProError) as err:
+            await node.async_connect()
+        assert "No data or results returned" in str(err)
 
 
 @pytest.mark.asyncio
