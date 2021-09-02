@@ -7,26 +7,8 @@ class AirVisualError(Exception):
     pass
 
 
-class InvalidKeyError(AirVisualError):
-    """Define an error when the API key is invalid."""
-
-    pass
-
-
-class KeyExpiredError(AirVisualError):
-    """Define an error when the API key has expired."""
-
-    pass
-
-
-class LimitReachedError(AirVisualError):
-    """Define an error when the API limit has been reached."""
-
-    pass
-
-
-class NoStationError(AirVisualError):
-    """Define an error when there's no station for the data requested."""
+class CloudAPIError(AirVisualError):
+    """Define an error related to the Cloud API."""
 
     pass
 
@@ -37,19 +19,43 @@ class NodeProError(AirVisualError):
     pass
 
 
-class NotFoundError(AirVisualError):
+class InvalidKeyError(CloudAPIError):
+    """Define an error when the API key is invalid."""
+
+    pass
+
+
+class KeyExpiredError(CloudAPIError):
+    """Define an error when the API key has expired."""
+
+    pass
+
+
+class LimitReachedError(CloudAPIError):
+    """Define an error when the API limit has been reached."""
+
+    pass
+
+
+class NoStationError(CloudAPIError):
+    """Define an error when there's no station for the data requested."""
+
+    pass
+
+
+class NotFoundError(CloudAPIError):
     """Define an error for when a location (city or node) cannot be found."""
 
     pass
 
 
-class RequestError(AirVisualError):
+class RequestError(CloudAPIError):
     """Define an error related to invalid requests."""
 
     pass
 
 
-class UnauthorizedError(AirVisualError):
+class UnauthorizedError(CloudAPIError):
     """Define an error related to unauthorized requests."""
 
     pass
