@@ -90,7 +90,11 @@ def _calculate_trends(history: List[OrderedDict], measurements_to_use: int) -> d
             values = values[-measurements_to_use:]
 
         index_array = np.array(values)
-        linear_fit = np.polyfit(index_range, index_array, 1,)
+        linear_fit = np.polyfit(
+            index_range,
+            index_array,
+            1,
+        )
         slope = round(linear_fit[0], 2)
 
         metric = _get_normalized_metric_name(attribute)
@@ -168,7 +172,9 @@ class NodeSamba:
         return result
 
     async def _async_get_file(
-        self, filepath: str, file_obj: tempfile.NamedTemporaryFile,  # type: ignore
+        self,
+        filepath: str,
+        file_obj: tempfile.NamedTemporaryFile,  # type: ignore
     ) -> None:
         """Save a file to a tempfile object."""
 
