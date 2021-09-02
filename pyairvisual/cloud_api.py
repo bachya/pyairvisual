@@ -40,8 +40,8 @@ def raise_on_data_error(data: dict) -> None:
     message = data["data"]["message"]
 
     try:
-        error = next((v for k, v in ERROR_CODES.items() if k in message))
-    except StopIteration:
+        [error] = [v for k, v in ERROR_CODES.items() if k in message]
+    except ValueError:
         error = AirVisualError
     raise error(message)
 
