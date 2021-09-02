@@ -1,15 +1,49 @@
 """Define a client to interact with the AirVisual Cloud API."""
 from json.decoder import JSONDecodeError
+from typing import Dict, Type
 
 from aiohttp import ClientSession, ClientTimeout
 
 from .air_quality import AirQuality
 from .const import DEFAULT_REQUEST_TIMEOUT
-from .errors import raise_on_data_error
+from .errors import (
+    AirVisualError,
+    InvalidKeyError,
+    KeyExpiredError,
+    LimitReachedError,
+    NodeProError,
+    NoStationError,
+    NotFoundError,
+    UnauthorizedError,
+)
 from .node import NodeCloudAPI
 from .supported import Supported
 
 API_URL_BASE: str = "https://api.airvisual.com/v2"
+
+ERROR_CODES: Dict[str, Type[AirVisualError]] = {
+    "api_key_expired": KeyExpiredError,
+    "call_limit_reached": LimitReachedError,
+    "city_not_found": NotFoundError,
+    "incorrect_api_key": InvalidKeyError,
+    "no_nearest_station": NoStationError,
+    "node not found": NodeProError,
+    "permission_denied": UnauthorizedError,
+}
+
+
+def raise_on_data_error(data: dict) -> None:
+    """Raise an error if the data payload suggests there is one."""
+    if "data" not in data or data.get("status") == "success":
+        return
+
+    message = data["data"]["message"]
+
+    try:
+        [error] = [v for k, v in ERROR_CODES.items() if k in message]
+    except ValueError:
+        error = AirVisualError
+    raise error(message)
 
 
 class CloudAPI:  # pylint: disable=too-few-public-methods

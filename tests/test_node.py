@@ -49,28 +49,32 @@ async def test_node_by_samba_connect_errors():
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
 
     with patch(
-        "smb.SMBConnection.SMBConnection.connect", side_effect=smb.base.NotReadyError,
+        "smb.SMBConnection.SMBConnection.connect",
+        side_effect=smb.base.NotReadyError,
     ):
         with pytest.raises(NodeProError) as err:
             await node.async_connect()
         assert "The Node/Pro unit returned an error: " in str(err)
 
     with patch(
-        "smb.SMBConnection.SMBConnection.connect", side_effect=smb.base.SMBTimeout,
+        "smb.SMBConnection.SMBConnection.connect",
+        side_effect=smb.base.SMBTimeout,
     ):
         with pytest.raises(NodeProError) as err:
             await node.async_connect()
         assert "Timed out while talking to the Node/Pro unit" in str(err)
 
     with patch(
-        "smb.SMBConnection.SMBConnection.connect", side_effect=ConnectionRefusedError,
+        "smb.SMBConnection.SMBConnection.connect",
+        side_effect=ConnectionRefusedError,
     ):
         with pytest.raises(NodeProError) as err:
             await node.async_connect()
         assert "Couldn't find a Node/Pro unit at IP address: 192.168.1.100" in str(err)
 
     with patch(
-        "smb.SMBConnection.SMBConnection.connect", return_value=False,
+        "smb.SMBConnection.SMBConnection.connect",
+        return_value=False,
     ):
         with pytest.raises(NodeProError) as err:
             await node.async_connect()
@@ -212,7 +216,8 @@ async def test_node_by_samba_get_file_errors():
             _ = await node.async_get_latest_measurements()
 
     with patch("smb.SMBConnection.SMBConnection.connect"), patch(
-        "smb.SMBConnection.SMBConnection.retrieveFile", side_effect=smb.base.SMBTimeout,
+        "smb.SMBConnection.SMBConnection.retrieveFile",
+        side_effect=smb.base.SMBTimeout,
     ):
         with pytest.raises(NodeProError):
             await node.async_connect()
@@ -249,7 +254,8 @@ async def test_node_by_samba_history_errors():
             _ = await node.async_get_history()
 
     with patch("smb.SMBConnection.SMBConnection.connect"), patch(
-        "smb.SMBConnection.SMBConnection.listPath", side_effect=smb.base.SMBTimeout,
+        "smb.SMBConnection.SMBConnection.listPath",
+        side_effect=smb.base.SMBTimeout,
     ):
         with pytest.raises(NodeProError):
             await node.async_connect()
