@@ -1,7 +1,7 @@
 aiohttp>=3.7.4
 aresponses==1.1.2
 asynctest==0.13.0
-numpy==1.18.2
+numpy==1.21.2
 pysmb==1.2.6
 pytest-aiohttp==0.3.0
 pytest-cov==2.8.1
