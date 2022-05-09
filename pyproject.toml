@@ -40,7 +40,7 @@ classifiers = [
 aiohttp = ">=3.8.0"
 numpy = ">=1.22.0"
 pysmb = "^1.2.6"
-python = ">=3.7.0,<3.11"
+python = "^3.8.0"
 
 [tool.poetry.dev-dependencies]
 aresponses = "^2.0.0"
