@@ -1,9 +1,10 @@
+.DS_Store
 .coverage
 .mypy_cache
 .tox/
 .venv
 __pycache__/
-pyairvisual.egg-info
 coverage.xml
 poetry.lock
+pyairvisual.egg-info
 tags
