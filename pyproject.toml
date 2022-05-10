@@ -80,4 +80,3 @@ ignore-docstrings = true
 
 # Ignore imports when computing similarities.
 ignore-imports = true
-
