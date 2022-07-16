@@ -29,10 +29,12 @@ ERROR_CODES: dict[str, type[AirVisualError]] = {
     "api_key_expired": KeyExpiredError,
     "call_limit_reached": LimitReachedError,
     "city_not_found": NotFoundError,
+    "feature_not_available": UnauthorizedError,
     "incorrect_api_key": InvalidKeyError,
     "no_nearest_station": NoStationError,
     "node not found": NodeProError,
     "permission_denied": UnauthorizedError,
+    "too_many_requests": LimitReachedError,
 }
 
 
@@ -41,13 +43,11 @@ def raise_on_data_error(data: dict[str, Any]) -> None:
     if "data" not in data or data.get("status") == "success":
         return
 
-    message = data["data"]["message"]
-
     try:
-        [error] = [v for k, v in ERROR_CODES.items() if k in message]
+        [error] = [v for k, v in ERROR_CODES.items() if k in data["data"]["message"]]
     except ValueError:
         error = AirVisualError
-    raise error(message)
+    raise error(data)
 
 
 class CloudAPI:  # pylint: disable=too-few-public-methods
