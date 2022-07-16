@@ -5,7 +5,6 @@ import asyncio
 from collections import OrderedDict
 import csv
 import json
-import logging
 import tempfile
 from types import TracebackType
 from typing import Any, Awaitable, Callable
@@ -14,6 +13,7 @@ import numpy as np
 import smb
 from smb.SMBConnection import SMBConnection
 
+from .const import LOGGER
 from .errors import NodeProError
 
 API_URL_BASE = "https://www.airvisual.com/api/v2/node"
@@ -21,8 +21,6 @@ API_URL_BASE = "https://www.airvisual.com/api/v2/node"
 SAMBA_HISTORY_PATTERN = "*_AirVisual_values.txt"
 SMB_SERVICE = "airvisual"
 SMB_USERNAME = "airvisual"
-
-_LOGGER = logging.getLogger(__name__)
 
 METRIC_AQI_CN = "aqi_cn"
 METRIC_AQI_US = "aqi_us"
@@ -218,7 +216,7 @@ class NodeSamba:
 
         data = json.loads(raw.decode())
 
-        _LOGGER.debug("Node Pro measurements loaded: %s", data)
+        LOGGER.debug("Node Pro measurements loaded: %s", data)
 
         try:
             # Handle a single measurement returned in a list:
@@ -278,7 +276,7 @@ class NodeSamba:
                         }
                     )
 
-            _LOGGER.debug("Node Pro history loaded: %s", data)
+            LOGGER.debug("Node Pro history loaded: %s", data)
 
             return data
 

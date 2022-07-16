@@ -7,7 +7,7 @@ from typing import Any
 from aiohttp import ClientSession, ClientTimeout
 
 from .air_quality import AirQuality
-from .const import DEFAULT_REQUEST_TIMEOUT
+from .const import LOGGER
 from .errors import (
     AirVisualError,
     InvalidKeyError,
@@ -22,6 +22,8 @@ from .node import NodeCloudAPI
 from .supported import Supported
 
 API_URL_BASE = "https://api.airvisual.com/v2"
+
+DEFAULT_REQUEST_TIMEOUT = 10
 
 ERROR_CODES: dict[str, type[AirVisualError]] = {
     "api_key_expired": KeyExpiredError,
@@ -104,6 +106,8 @@ class CloudAPI:  # pylint: disable=too-few-public-methods
             # here, we use the string value (with quotes removed) to raise an error:
             response_text = data.replace('"', "")
             data = {"status": "fail", "data": {"message": response_text}}
+
+        LOGGER.debug("Data received for /%s: %s", endpoint, data)
 
         raise_on_data_error(data)
 

@@ -1,2 +1,4 @@
 """Define package-wide constants."""
-DEFAULT_REQUEST_TIMEOUT: int = 10
+import logging
+
+LOGGER = logging.getLogger(__package__)
