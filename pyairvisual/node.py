@@ -1,5 +1,6 @@
 """Define objects to interact with an AirVisual Node/Pro."""
-# pylint: disable=too-few-public-methods
+from __future__ import annotations
+
 import asyncio
 from collections import OrderedDict
 import csv
@@ -7,7 +8,7 @@ import json
 import logging
 import tempfile
 from types import TracebackType
-from typing import Callable, Coroutine, List, Optional, Set, Type
+from typing import Any, Awaitable, Callable
 
 import numpy as np
 import smb
@@ -67,14 +68,16 @@ TREND_INCREASING = "increasing"
 TREND_DECREASING = "decreasing"
 
 
-def _calculate_trends(history: List[OrderedDict], measurements_to_use: int) -> dict:
+def _calculate_trends(
+    history: list[OrderedDict], measurements_to_use: int
+) -> dict[str, Any]:
     """Calculate the trends of all data points in history data."""
     if measurements_to_use == -1:
         index_range = np.arange(0, len(history))
     else:
         index_range = np.arange(0, measurements_to_use)
 
-    measured_attributes: Set = set().union(*(d.keys() for d in history))
+    measured_attributes = set().union(*(d.keys() for d in history))
     metrics_to_trend = measured_attributes.intersection(list(METRICS_TO_TREND))
 
     trends = {}
@@ -114,14 +117,14 @@ def _get_normalized_metric_name(key: str) -> str:
     return METRIC_MAPPING.get(key, key)
 
 
-class NodeCloudAPI:
+class NodeCloudAPI:  # pylint: disable=too-few-public-methods
     """Define an object to work with getting Node info via the Cloud API."""
 
-    def __init__(self, request: Callable[..., Coroutine]) -> None:
+    def __init__(self, request: Callable[..., Awaitable]) -> None:
         """Initialize."""
-        self._request: Callable[..., Coroutine] = request
+        self._request = request
 
-    async def get_by_node_id(self, node_id: str) -> dict:
+    async def get_by_node_id(self, node_id: str) -> dict[str, Any]:
         """Return cloud API data from a node its ID."""
         return await self._request("get", node_id, base_url=API_URL_BASE)
 
@@ -144,9 +147,9 @@ class NodeSamba:
 
     async def __aexit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
     ) -> None:
         """Handle the end of a context manager."""
         await self.async_disconnect()
@@ -205,7 +208,7 @@ class NodeSamba:
             await self._async_execute_samba_command(disconnect)
             self._connected = False
 
-    async def async_get_latest_measurements(self) -> dict:
+    async def async_get_latest_measurements(self) -> dict[str, Any]:
         """Get the latest measurements from the device."""
         tmp_file = tempfile.NamedTemporaryFile()
         await self._async_get_file("/latest_config_measurements.json", tmp_file)
@@ -240,7 +243,7 @@ class NodeSamba:
 
     async def async_get_history(
         self, *, include_trends: bool = True, measurements_to_use: int = -1
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Get history data from the device."""
 
         def search_history():
@@ -265,7 +268,7 @@ class NodeSamba:
         def load_history():
             """Load."""
             data = []
-            with open(tmp_file.name) as file:
+            with open(tmp_file.name, encoding="utf-8") as file:
                 reader = csv.DictReader(file, delimiter=";")
                 for row in reader:
                     data.append(

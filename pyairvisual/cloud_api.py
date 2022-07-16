@@ -1,6 +1,8 @@
 """Define a client to interact with the AirVisual Cloud API."""
+from __future__ import annotations
+
 from json.decoder import JSONDecodeError
-from typing import Dict, Type
+from typing import Any
 
 from aiohttp import ClientSession, ClientTimeout
 
@@ -19,9 +21,9 @@ from .errors import (
 from .node import NodeCloudAPI
 from .supported import Supported
 
-API_URL_BASE: str = "https://api.airvisual.com/v2"
+API_URL_BASE = "https://api.airvisual.com/v2"
 
-ERROR_CODES: Dict[str, Type[AirVisualError]] = {
+ERROR_CODES: dict[str, type[AirVisualError]] = {
     "api_key_expired": KeyExpiredError,
     "call_limit_reached": LimitReachedError,
     "city_not_found": NotFoundError,
@@ -32,7 +34,7 @@ ERROR_CODES: Dict[str, Type[AirVisualError]] = {
 }
 
 
-def raise_on_data_error(data: dict) -> None:
+def raise_on_data_error(data: dict[str, Any]) -> None:
     """Raise an error if the data payload suggests there is one."""
     if "data" not in data or data.get("status") == "success":
         return
@@ -51,16 +53,16 @@ class CloudAPI:  # pylint: disable=too-few-public-methods
 
     def __init__(self, api_key: str, session: ClientSession = None) -> None:
         """Initialize."""
-        self._api_key: str = api_key
-        self._session: ClientSession = session
+        self._api_key = api_key
+        self._session: ClientSession | None = session
 
-        self.air_quality: AirQuality = AirQuality(self._request)
-        self.node: NodeCloudAPI = NodeCloudAPI(self._request)
-        self.supported: Supported = Supported(self._request)
+        self.air_quality = AirQuality(self._request)
+        self.node = NodeCloudAPI(self._request)
+        self.supported = Supported(self._request)
 
     async def _request(
         self, method: str, endpoint: str, *, base_url: str = API_URL_BASE, **kwargs
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Make a request against the API."""
         kwargs.setdefault("headers", {})
         kwargs["headers"]["Content-Type"] = "application/json"
@@ -70,13 +72,14 @@ class CloudAPI:  # pylint: disable=too-few-public-methods
 
         use_running_session = self._session and not self._session.closed
 
-        session: ClientSession
         if use_running_session:
             session = self._session
         else:
             session = ClientSession(
                 timeout=ClientTimeout(total=DEFAULT_REQUEST_TIMEOUT)
             )
+
+        assert session
 
         try:
             async with session.request(
