@@ -26,7 +26,7 @@ use_parentheses = true
 
 [tool.poetry]
 name = "pyairvisual"
-version = "2021.10.0"
+version = "2022.07.0"
 description = "A simple API for AirVisual air quality data"
 readme = "README.md"
 authors = ["Aaron Bach <bachya1208@gmail.com>"]
