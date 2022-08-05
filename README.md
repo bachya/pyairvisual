@@ -187,13 +187,13 @@ from pyairvisual.node import NodeSamba
 async def main() -> None:
     """Run!"""
     async with NodeSamba("<IP_ADDRESS_OR_HOST>", "<PASSWORD>") as node:
-        measurements = node.async_get_latest_measurements()
+        measurements = await node.async_get_latest_measurements()
 
         # Can take some optional parameters:
         #   1. include_trends: include trends (defaults to True)
         #   2. measurements_to_use: the number of measurements to use when calculating
         #      trends (defaults to -1, which means "use all measurements")
-        history = node.async_get_history()
+        history = await node.async_get_history()
 
 
 asyncio.run(main())
