@@ -3,8 +3,8 @@
 [![CI](https://github.com/bachya/pyairvisual/workflows/CI/badge.svg)](https://github.com/bachya/pyairvisual/actions)
 [![PyPi](https://img.shields.io/pypi/v/pyairvisual.svg)](https://pypi.python.org/pypi/pyairvisual)
 [![Version](https://img.shields.io/pypi/pyversions/pyairvisual.svg)](https://pypi.python.org/pypi/pyairvisual)
-[![License](https://img.shields.io/pypi/l/pyairvisual.svg)](https://github.com/bachya/pyairvisual/blob/master/LICENSE)
-[![Code Coverage](https://codecov.io/gh/bachya/pyairvisual/branch/master/graph/badge.svg)](https://codecov.io/gh/bachya/pyairvisual)
+[![License](https://img.shields.io/pypi/l/pyairvisual.svg)](https://github.com/bachya/pyairvisual/blob/main/LICENSE)
+[![Code Coverage](https://codecov.io/gh/bachya/pyairvisual/branch/main/graph/badge.svg)](https://codecov.io/gh/bachya/pyairvisual)
 [![Maintainability](https://api.codeclimate.com/v1/badges/948e4e3c84e5c49826f1/maintainability)](https://codeclimate.com/github/bachya/pyairvisual/maintainability)
 [![Say Thanks](https://img.shields.io/badge/SayThanks-!-1EAEDB.svg)](https://saythanks.io/to/bachya)
 
