@@ -260,6 +260,7 @@ class NodeSamba:
             )
 
         history_files = await self._async_execute_samba_command(search_history)
+        history_files.sort(key=lambda file: file.filename)
 
         if not history_files:
             raise NodeProError(
