@@ -8,7 +8,7 @@ class AirQuality:
     """Define an object to manage air quality API calls."""
 
     def __init__(self, request: Callable[..., Awaitable]) -> None:
-        """Iniitialize."""
+        """Initialize."""
         self._request = request
 
     async def _nearest(
