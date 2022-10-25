@@ -8,7 +8,7 @@ class Supported:
     """Define an object to supported location API calls."""
 
     def __init__(self, request: Callable[..., Awaitable]) -> None:
-        """Iniitialize."""
+        """Initialize."""
         self._request = request
 
     async def cities(self, country: str, state: str) -> list[dict[str, Any]]:
