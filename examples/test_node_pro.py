@@ -2,8 +2,7 @@
 import asyncio
 import logging
 
-from pyairvisual import NodeSamba
-from pyairvisual.errors import NodeProError
+from pyairvisual.node import NodeProError, NodeSamba
 
 _LOGGER = logging.getLogger(__name__)
 

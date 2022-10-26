@@ -14,7 +14,7 @@ import smb
 from smb.SMBConnection import SMBConnection
 
 from .const import LOGGER
-from .errors import NodeProError
+from .errors import AirVisualError
 
 API_URL_BASE = "https://www.airvisual.com/api/v2/node"
 
@@ -64,6 +64,12 @@ METRIC_MAPPING = {
 TREND_FLAT = "flat"
 TREND_INCREASING = "increasing"
 TREND_DECREASING = "decreasing"
+
+
+class NodeProError(AirVisualError):
+    """Define an error related to Node/Pro errors."""
+
+    pass
 
 
 def _calculate_trends(

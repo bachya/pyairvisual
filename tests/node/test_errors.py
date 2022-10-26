@@ -5,8 +5,7 @@ from unittest.mock import Mock
 import pytest
 import smb
 
-from pyairvisual.errors import NodeProError
-from pyairvisual.node import NodeSamba
+from pyairvisual.node import NodeProError, NodeSamba
 
 from tests.common import TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
 
