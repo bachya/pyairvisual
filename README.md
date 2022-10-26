@@ -77,7 +77,7 @@ The Enterprise Plan gives access to:
 ```python
 import asyncio
 
-from pyairvisual import CloudAPI
+from pyairvisual.cloud_api import CloudAPI
 
 
 async def main() -> None:
@@ -134,7 +134,7 @@ import asyncio
 
 from aiohttp import ClientSession
 
-from pyairvisual import CloudAPI
+from pyairvisual.cloud_api import CloudAPI
 
 
 async def main() -> None:
@@ -158,7 +158,7 @@ import asyncio
 
 from aiohttp import ClientSession
 
-from pyairvisual import CloudAPI
+from pyairvisual.cloud_api import CloudAPI
 
 
 async def main() -> None:

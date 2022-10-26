@@ -4,8 +4,7 @@ import logging
 
 from aiohttp import ClientSession
 
-from pyairvisual import CloudAPI
-from pyairvisual.errors import AirVisualError, UnauthorizedError
+from pyairvisual.cloud_api import AirVisualError, CloudAPI, UnauthorizedError
 
 _LOGGER = logging.getLogger(__name__)
 

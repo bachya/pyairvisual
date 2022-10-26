@@ -8,22 +8,62 @@ from aiohttp import ClientSession, ClientTimeout
 
 from .air_quality import AirQuality
 from .const import LOGGER
-from .errors import (
-    AirVisualError,
-    InvalidKeyError,
-    KeyExpiredError,
-    LimitReachedError,
-    NodeProError,
-    NoStationError,
-    NotFoundError,
-    UnauthorizedError,
-)
+from .errors import AirVisualError
 from .node import NodeCloudAPI
 from .supported import Supported
 
 API_URL_BASE = "https://api.airvisual.com/v2"
 
 DEFAULT_REQUEST_TIMEOUT = 10
+
+
+class CloudAPIError(AirVisualError):
+    """Define an error related to the Cloud API."""
+
+    pass
+
+
+class InvalidKeyError(CloudAPIError):
+    """Define an error when the API key is invalid."""
+
+    pass
+
+
+class KeyExpiredError(CloudAPIError):
+    """Define an error when the API key has expired."""
+
+    pass
+
+
+class LimitReachedError(CloudAPIError):
+    """Define an error when the API limit has been reached."""
+
+    pass
+
+
+class NoStationError(CloudAPIError):
+    """Define an error when there's no station for the data requested."""
+
+    pass
+
+
+class NotFoundError(CloudAPIError):
+    """Define an error for when a location (city or node) cannot be found."""
+
+    pass
+
+
+class RequestError(CloudAPIError):
+    """Define an error related to invalid requests."""
+
+    pass
+
+
+class UnauthorizedError(CloudAPIError):
+    """Define an error related to unauthorized requests."""
+
+    pass
+
 
 ERROR_CODES: dict[str, type[AirVisualError]] = {
     "api_key_expired": KeyExpiredError,
@@ -32,7 +72,7 @@ ERROR_CODES: dict[str, type[AirVisualError]] = {
     "feature_not_available": UnauthorizedError,
     "incorrect_api_key": InvalidKeyError,
     "no_nearest_station": NoStationError,
-    "node not found": NodeProError,
+    "node not found": NotFoundError,
     "permission_denied": UnauthorizedError,
     "too_many_requests": LimitReachedError,
 }

@@ -4,13 +4,12 @@ import json
 import aiohttp
 import pytest
 
-from pyairvisual import CloudAPI
-from pyairvisual.errors import (
+from pyairvisual.cloud_api import (
     AirVisualError,
+    CloudAPI,
     InvalidKeyError,
     KeyExpiredError,
     LimitReachedError,
-    NodeProError,
     NoStationError,
     NotFoundError,
     UnauthorizedError,
@@ -49,7 +48,7 @@ async def test_invalid_json_response(aresponses):
         ("error_key_expired_response", 401, KeyExpiredError),
         ("error_limit_reached_response", 429, LimitReachedError),
         ("error_no_nearest_station_response", 404, NoStationError),
-        ("error_node_not_found_response", 404, NodeProError),
+        ("error_node_not_found_response", 404, NotFoundError),
         ("error_permission_denied_response", 403, UnauthorizedError),
     ],
 )
