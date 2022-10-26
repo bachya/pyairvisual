@@ -65,7 +65,10 @@ async def test_node_by_samba_fewer_trend_measurements(setup_samba_connection):
     "node_measurements_file", ["node_measurements_samba_list_response.json"]
 )
 async def test_node_by_samba_list_response(setup_samba_connection):
-    """Test getting a node's info over the local network (via Samba) – list variant."""
+    """Test getting a node's info over the local network (via Samba).
+
+    This variant of the test expects a list-esque response from the unit.
+    """
     async with NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD) as node:
         measurements = await node.async_get_latest_measurements()
         history = await node.async_get_history()
