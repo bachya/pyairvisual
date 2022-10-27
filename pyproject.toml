@@ -24,6 +24,10 @@ not_skip = "__init__.py"
 sections = "FUTURE,STDLIB,INBETWEENS,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 use_parentheses = true
 
+[[tool.mypy.overrides]]
+module = "smb.*"
+ignore_missing_imports = true
+
 [tool.poetry]
 name = "pyairvisual"
 version = "2022.07.0"

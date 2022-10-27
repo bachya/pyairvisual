@@ -5,7 +5,7 @@ from unittest.mock import Mock
 import pytest
 import smb
 
-from pyairvisual.node import NodeProError, NodeSamba
+from pyairvisual.node import InvalidAuthenticationError, NodeProError, NodeSamba
 
 from tests.common import TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
 
@@ -24,11 +24,7 @@ from tests.common import TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
         ),
         (
             Mock(side_effect=ConnectionRefusedError),
-            "Couldn't find a Node/Pro unit at IP address: 192.168.1.100",
-        ),
-        (
-            Mock(return_value=False),
-            "No data or results returned",
+            "Couldn't find a Node/Pro unit at the provided IP address",
         ),
     ],
 )
@@ -56,6 +52,15 @@ async def test_history_errors(setup_samba_connection):
     with pytest.raises(NodeProError):
         await node.async_connect()
         _ = await node.async_get_history()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mock_pysmb_connect", [Mock(return_value=False)])
+async def test_failed_authentication(setup_samba_connection):
+    """Test that failed authentication is caught."""
+    node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
+    with pytest.raises(InvalidAuthenticationError):
+        await node.async_connect()
 
 
 @pytest.mark.asyncio
