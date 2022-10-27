@@ -38,6 +38,8 @@ async def test_aqi_ranking(aresponses, city_ranking_response):
         assert data[0]["state"] == "Oregon"
         assert data[0]["country"] == "USA"
 
+    aresponses.assert_plan_strictly_followed()
+
 
 @pytest.mark.asyncio
 async def test_cities(aresponses, cities_response):
@@ -55,6 +57,8 @@ async def test_cities(aresponses, cities_response):
         cloud_api = CloudAPI(TEST_API_KEY, session=session)
         data = await cloud_api.supported.cities(TEST_COUNTRY, TEST_STATE)
         assert len(data) == 27
+
+    aresponses.assert_plan_strictly_followed()
 
 
 @pytest.mark.asyncio
@@ -78,6 +82,8 @@ async def test_city_by_coordinates(aresponses, city_response):
         assert data["state"] == "California"
         assert data["country"] == "USA"
 
+    aresponses.assert_plan_strictly_followed()
+
 
 @pytest.mark.asyncio
 async def test_city_by_ip(aresponses, city_response):
@@ -97,6 +103,8 @@ async def test_city_by_ip(aresponses, city_response):
         assert data["city"] == "Los Angeles"
         assert data["state"] == "California"
         assert data["country"] == "USA"
+
+    aresponses.assert_plan_strictly_followed()
 
 
 @pytest.mark.asyncio
@@ -121,6 +129,8 @@ async def test_city_by_name(aresponses, city_response):
         assert data["state"] == "California"
         assert data["country"] == "USA"
 
+    aresponses.assert_plan_strictly_followed()
+
 
 @pytest.mark.asyncio
 async def test_countries(aresponses, countries_response):
@@ -138,6 +148,8 @@ async def test_countries(aresponses, countries_response):
         cloud_api = CloudAPI(TEST_API_KEY, session=session)
         data = await cloud_api.supported.countries()
         assert len(data) == 79
+
+    aresponses.assert_plan_strictly_followed()
 
 
 @pytest.mark.asyncio
@@ -158,6 +170,8 @@ async def test_no_explicit_client_session(aresponses, city_ranking_response):
     assert data[0]["city"] == "Portland"
     assert data[0]["state"] == "Oregon"
     assert data[0]["country"] == "USA"
+
+    aresponses.assert_plan_strictly_followed()
 
 
 @pytest.mark.asyncio
@@ -180,6 +194,8 @@ async def test_node_by_id(aresponses, node_by_id_response):
         assert data["current"]["p2"] == 35
         assert data["current"]["co"] == 479
 
+    aresponses.assert_plan_strictly_followed()
+
 
 @pytest.mark.asyncio
 async def test_states(aresponses, states_response):
@@ -197,6 +213,8 @@ async def test_states(aresponses, states_response):
         cloud_api = CloudAPI(TEST_API_KEY, session=session)
         data = await cloud_api.supported.states(TEST_COUNTRY)
         assert len(data) == 6
+
+    aresponses.assert_plan_strictly_followed()
 
 
 @pytest.mark.asyncio
@@ -220,6 +238,8 @@ async def test_station_by_coordinates(aresponses, station_response):
         assert data["state"] == "Beijing"
         assert data["country"] == "China"
 
+    aresponses.assert_plan_strictly_followed()
+
 
 @pytest.mark.asyncio
 async def test_station_by_ip(aresponses, station_response):
@@ -239,6 +259,8 @@ async def test_station_by_ip(aresponses, station_response):
         assert data["city"] == "Beijing"
         assert data["state"] == "Beijing"
         assert data["country"] == "China"
+
+    aresponses.assert_plan_strictly_followed()
 
 
 @pytest.mark.asyncio
@@ -265,6 +287,8 @@ async def test_station_by_name(aresponses, station_response):
         assert data["state"] == "Beijing"
         assert data["country"] == "China"
 
+    aresponses.assert_plan_strictly_followed()
+
 
 @pytest.mark.asyncio
 async def test_stations(aresponses, stations_response):
@@ -282,3 +306,5 @@ async def test_stations(aresponses, stations_response):
         cloud_api = CloudAPI(TEST_API_KEY, session=session)
         data = await cloud_api.supported.stations(TEST_CITY, TEST_STATE, TEST_COUNTRY)
         assert len(data) == 2
+
+    aresponses.assert_plan_strictly_followed()
