@@ -51,7 +51,7 @@ classifiers = [
 aiohttp = ">=3.8.0"
 numpy = ">=1.22.0"
 pysmb = "^1.2.6"
-python = "^3.9.0"
+python = ">=3.9.0"
 
 [tool.poetry.dev-dependencies]
 aresponses = "^2.0.0"
@@ -61,7 +61,6 @@ pre-commit = "^2.0.1"
 pytest = "^7.0.0"
 pytest-aiohttp = "^1.0.0"
 pytest-cov = "^4.0.0"
-types-aiofiles = "^22.1.0"
 
 [tool.pylint.BASIC]
 expected-line-ending-format = "LF"
