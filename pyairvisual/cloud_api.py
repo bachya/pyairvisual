@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from json.decoder import JSONDecodeError
-from typing import Any
+from typing import Any, cast
 
 from aiohttp import ClientSession, ClientTimeout
 
@@ -103,7 +103,12 @@ class CloudAPI:  # pylint: disable=too-few-public-methods
         self.supported = Supported(self._request)
 
     async def _request(
-        self, method: str, endpoint: str, *, base_url: str = API_URL_BASE, **kwargs
+        self,
+        method: str,
+        endpoint: str,
+        *,
+        base_url: str = API_URL_BASE,
+        **kwargs: dict[str, Any],
     ) -> dict[str, Any]:
         """Make a request against the API."""
         kwargs.setdefault("headers", {})
@@ -151,4 +156,4 @@ class CloudAPI:  # pylint: disable=too-few-public-methods
 
         raise_on_data_error(data)
 
-        return data
+        return cast(dict[str, Any], data)

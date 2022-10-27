@@ -1,7 +1,7 @@
 """Define an object to retrieve air quality info."""
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable
+from typing import Any, Awaitable, Callable, cast
 
 
 class AirQuality:
@@ -24,14 +24,14 @@ class AirQuality:
             params = {}
 
         data = await self._request("get", f"nearest_{kind}", params=params)
-        return data["data"]
+        return cast(dict[str, Any], data["data"])
 
     async def city(self, city: str, state: str, country: str) -> dict[str, Any]:
         """Return data for the specified city."""
         data = await self._request(
             "get", "city", params={"city": city, "state": state, "country": country}
         )
-        return data["data"]
+        return cast(dict[str, Any], data["data"])
 
     async def nearest_city(
         self,
@@ -52,7 +52,7 @@ class AirQuality:
     async def ranking(self) -> dict[str, Any]:
         """Return a sorted array of selected major cities in the world."""
         data = await self._request("get", "city_ranking")
-        return data["data"]
+        return cast(dict[str, Any], data["data"])
 
     async def station(
         self, station: str, city: str, state: str, country: str
@@ -68,4 +68,4 @@ class AirQuality:
                 "country": country,
             },
         )
-        return data["data"]
+        return cast(dict[str, Any], data["data"])

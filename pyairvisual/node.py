@@ -8,7 +8,7 @@ from functools import partial
 import json
 import tempfile
 from types import TracebackType
-from typing import IO, Any, Awaitable, Callable, cast
+from typing import IO, Any, Awaitable, Callable, Union, cast, overload
 
 import numpy as np
 import smb
@@ -137,7 +137,13 @@ class NodeCloudAPI:  # pylint: disable=too-few-public-methods
 
     async def get_by_node_id(self, node_id: str) -> dict[str, Any]:
         """Return cloud API data from a node its ID."""
-        return await self._request("get", node_id, base_url=API_URL_BASE)
+        data = await self._request("get", node_id, base_url=API_URL_BASE)
+        return cast(dict[str, Any], data)
+
+
+SambaOperationReturnType = Union[
+    None, int, list[smb.base.SharedFile], list[dict[str, Any]]
+]
 
 
 class NodeSamba:
@@ -165,9 +171,48 @@ class NodeSamba:
         """Handle the end of a context manager."""
         await self.async_disconnect()
 
+    @overload
     async def _execute_samba_operation(
-        self, pysmb_func: Callable[..., Any], *args, **kwargs
-    ) -> int | list[smb.base.SharedFile] | list[dict[str, Any]] | None:
+        self, pysmb_func: Callable[..., SambaOperationReturnType]
+    ) -> list[dict[str, Any]]:
+        ...
+
+    @overload
+    async def _execute_samba_operation(
+        self,
+        pysmb_func: Callable[[None], SambaOperationReturnType],
+        ip_or_hostname: str,
+    ) -> bool:
+        ...
+
+    @overload
+    async def _execute_samba_operation(
+        self,
+        pysmb_func: Callable[[str, str, IO[bytes]], SambaOperationReturnType],
+        service: str,
+        filepath: str,
+        file_obj: IO[bytes],
+    ) -> None:
+        ...
+
+    @overload
+    async def _execute_samba_operation(
+        self,
+        pysmb_func: Callable[[str, str], SambaOperationReturnType],
+        service: str,
+        filepath: str,
+        *,
+        pattern: str | None = None,
+        search: str | None = None,
+    ) -> list[smb.base.SharedFile]:
+        ...
+
+    async def _execute_samba_operation(
+        self,
+        pysmb_func: Callable[..., SambaOperationReturnType],
+        *args: Any,
+        **kwargs: Any,
+    ) -> SambaOperationReturnType:
         """Guard a Samba command with appropriate error handling."""
         func_with_kwargs = partial(pysmb_func, **kwargs)
         try:
@@ -187,21 +232,20 @@ class NodeSamba:
 
     async def _async_get_history_files(self) -> list[smb.base.SharedFile]:
         """Return all the history files on a Samba device."""
-        files = await self._execute_samba_operation(
+        return await self._execute_samba_operation(
             self._conn.listPath,
             SMB_SERVICE,
             "/",
             pattern=SAMBA_HISTORY_PATTERN,
             search=smb.smb_constants.SMB_FILE_ATTRIBUTE_NORMAL,
         )
-        return cast(list[smb.base.SharedFile], files)
 
     async def _async_retrieve_data_from_tempfile(
         self, tmp_file: IO[bytes]
     ) -> list[dict[str, Any]]:
         """Retrieve data from a NamedTemporaryFile."""
 
-        def get_data():
+        def get_data() -> list[dict[str, Any]]:
             """Get the data."""
             data = []
             with open(tmp_file.name, encoding="utf-8") as file:
@@ -217,8 +261,7 @@ class NodeSamba:
             LOGGER.debug("Loaded data from file: %s", data)
             return data
 
-        data = await self._execute_samba_operation(get_data)
-        return cast(list[dict[str, Any]], data)
+        return await self._execute_samba_operation(get_data)
 
     async def _async_store_filepath_in_tempfile(
         self, filepath: str, tmp_file: IO[bytes]
@@ -257,7 +300,7 @@ class NodeSamba:
     ) -> dict[str, Any]:
         """Get history data from the device."""
         history_files = await self._async_get_history_files()
-        history_files.sort(key=lambda file: file.filename)
+        history_files.sort(key=lambda file: file.filename)  # type: ignore
 
         if not history_files:
             raise NodeProError(
