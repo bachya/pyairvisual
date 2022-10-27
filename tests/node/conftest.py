@@ -45,7 +45,7 @@ def mock_pysmb_close_fixture():
 @pytest.fixture(name="mock_pysmb_connect")
 def mock_pysmb_connect_fixture():
     """Define a fixture to mock the pysmb connect method."""
-    return Mock()
+    return Mock(return_value=True)
 
 
 @pytest.fixture(name="mock_pysmb_list_path")

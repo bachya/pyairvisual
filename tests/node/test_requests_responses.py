@@ -8,6 +8,28 @@ from tests.common import TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
 
 
 @pytest.mark.asyncio
+async def test_duplicate_connection(caplog, setup_samba_connection):
+    """Test attempting to connect after we're already connected."""
+    node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
+    await node.async_connect()
+    await node.async_connect()
+    await node.async_disconnect()
+
+    assert any("Already connected!" in m for m in caplog.messages)
+
+
+@pytest.mark.asyncio
+async def test_duplicate_disconnection(caplog, setup_samba_connection):
+    """Test attempting to disconnect after we're already disconnected."""
+    node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
+    await node.async_connect()
+    await node.async_disconnect()
+    await node.async_disconnect()
+
+    assert any("Already disconnected!" in m for m in caplog.messages)
+
+
+@pytest.mark.asyncio
 async def test_node_by_samba_dict_response(setup_samba_connection):
     """Test getting a node's info over the local network (via Samba).
 

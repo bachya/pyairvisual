@@ -4,10 +4,11 @@ from __future__ import annotations
 import asyncio
 from collections import OrderedDict
 import csv
+from functools import partial
 import json
 import tempfile
 from types import TracebackType
-from typing import Any, Awaitable, Callable
+from typing import IO, Any, Awaitable, Callable, cast
 
 import numpy as np
 import smb
@@ -68,6 +69,12 @@ TREND_DECREASING = "decreasing"
 
 class NodeProError(AirVisualError):
     """Define an error related to Node/Pro errors."""
+
+    pass
+
+
+class InvalidAuthenticationError(NodeProError):
+    """Define an error for invalid authentication."""
 
     pass
 
@@ -158,120 +165,44 @@ class NodeSamba:
         """Handle the end of a context manager."""
         await self.async_disconnect()
 
-    async def _async_execute_samba_command(self, func: Callable):
-        """Execute (and catch errors with) a Samba command."""
+    async def _execute_samba_operation(
+        self, pysmb_func: Callable[..., Any], *args, **kwargs
+    ) -> int | list[smb.base.SharedFile] | list[dict[str, Any]] | None:
+        """Guard a Samba command with appropriate error handling."""
+        func_with_kwargs = partial(pysmb_func, **kwargs)
         try:
-            result = await self._loop.run_in_executor(None, func)
+            result = await self._loop.run_in_executor(None, func_with_kwargs, *args)
         except smb.base.NotReadyError as err:
-            raise NodeProError(f"The Node/Pro unit returned an error: {err}") from None
-        except smb.base.SMBTimeout:
-            raise NodeProError("Timed out while talking to the Node/Pro unit") from None
-        except ConnectionRefusedError:
+            raise NodeProError(f"The Node/Pro unit returned an error: {err}") from err
+        except smb.base.SMBTimeout as err:
+            raise NodeProError("Timed out while talking to the Node/Pro unit") from err
+        except ConnectionRefusedError as err:
             raise NodeProError(
-                f"Couldn't find a Node/Pro unit at IP address: {self._ip_or_hostname}"
-            ) from None
+                "Couldn't find a Node/Pro unit at the provided IP address"
+            ) from err
         except Exception as err:  # pylint: disable=broad-except
-            raise NodeProError(err) from None
-
-        if result is False:
-            raise NodeProError("No data or results returned") from None
+            raise NodeProError(err) from err
 
         return result
 
-    async def _async_get_file(
-        self,
-        filepath: str,
-        file_obj: tempfile.NamedTemporaryFile,  # type: ignore
-    ) -> None:
-        """Save a file to a tempfile object."""
+    async def _async_get_history_files(self) -> list[smb.base.SharedFile]:
+        """Return all the history files on a Samba device."""
+        files = await self._execute_samba_operation(
+            self._conn.listPath,
+            SMB_SERVICE,
+            "/",
+            pattern=SAMBA_HISTORY_PATTERN,
+            search=smb.smb_constants.SMB_FILE_ATTRIBUTE_NORMAL,
+        )
+        return cast(list[smb.base.SharedFile], files)
 
-        def get():
-            """Get the file."""
-            return self._conn.retrieveFile(SMB_SERVICE, filepath, file_obj)
+    async def _async_retrieve_data_from_tempfile(
+        self, tmp_file: IO[bytes]
+    ) -> list[dict[str, Any]]:
+        """Retrieve data from a NamedTemporaryFile."""
 
-        await self._async_execute_samba_command(get)
-
-    async def async_connect(self) -> None:
-        """Return cloud API data from a node its ID."""
-
-        def connect():
-            """Connect."""
-            return self._conn.connect(self._ip_or_hostname)
-
-        await self._async_execute_samba_command(connect)
-        self._connected = True
-
-    async def async_disconnect(self) -> None:
-        """Return cloud API data from a node its ID."""
-
-        def disconnect():
-            """Connect."""
-            return self._conn.close()
-
-        if self._connected:
-            await self._async_execute_samba_command(disconnect)
-            self._connected = False
-
-    async def async_get_latest_measurements(self) -> dict[str, Any]:
-        """Get the latest measurements from the device."""
-        tmp_file = tempfile.NamedTemporaryFile()
-        await self._async_get_file("/latest_config_measurements.json", tmp_file)
-        tmp_file.seek(0)
-        raw = tmp_file.read()
-        tmp_file.close()
-
-        data = json.loads(raw.decode())
-
-        LOGGER.debug("Node Pro measurements loaded: %s", data)
-
-        try:
-            # Handle a single measurement returned in a list:
-            measurements = data["measurements"][0].items()
-        except KeyError:
-            # Handle a single measurement returned as a standalone dict:
-            measurements = data["measurements"].items()
-
-        data["last_measurement_timestamp"] = int(data["date_and_time"]["timestamp"])
-
-        data["measurements"] = {
-            _get_normalized_metric_name(pollutant): value
-            for pollutant, value in measurements
-        }
-
-        data["status"]["sensor_life"] = {
-            _get_normalized_metric_name(pollutant): value
-            for pollutant, value in data["status"].get("sensor_life", {}).items()
-        }
-
-        return data
-
-    async def async_get_history(
-        self, *, include_trends: bool = True, measurements_to_use: int = -1
-    ) -> dict[str, Any]:
-        """Get history data from the device."""
-
-        def search_history():
-            """Search for the most recent history file."""
-            return self._conn.listPath(
-                SMB_SERVICE,
-                "/",
-                search=smb.smb_constants.SMB_FILE_ATTRIBUTE_NORMAL,
-                pattern=SAMBA_HISTORY_PATTERN,
-            )
-
-        history_files = await self._async_execute_samba_command(search_history)
-        history_files.sort(key=lambda file: file.filename)
-
-        if not history_files:
-            raise NodeProError(
-                f"No history files found that match {SAMBA_HISTORY_PATTERN}"
-            )
-
-        tmp_file = tempfile.NamedTemporaryFile()
-        await self._async_get_file(f"/{history_files[-1].filename}", tmp_file)
-
-        def load_history():
-            """Load."""
+        def get_data():
+            """Get the data."""
             data = []
             with open(tmp_file.name, encoding="utf-8") as file:
                 reader = csv.DictReader(file, delimiter=";")
@@ -283,16 +214,103 @@ class NodeSamba:
                         }
                     )
 
-            LOGGER.debug("Node Pro history loaded: %s", data)
-
+            LOGGER.debug("Loaded data from file: %s", data)
             return data
 
-        data = {}
+        data = await self._execute_samba_operation(get_data)
+        return cast(list[dict[str, Any]], data)
 
-        data["measurements"] = await self._loop.run_in_executor(None, load_history)
+    async def _async_store_filepath_in_tempfile(
+        self, filepath: str, tmp_file: IO[bytes]
+    ) -> None:
+        """Save a file to a NamedTemporaryFile object."""
+        await self._execute_samba_operation(
+            self._conn.retrieveFile, SMB_SERVICE, filepath, tmp_file
+        )
+
+    async def async_connect(self) -> None:
+        """Connect to the Node."""
+        if self._connected:
+            LOGGER.warning("Already connected!")
+            return
+
+        result = await self._execute_samba_operation(
+            self._conn.connect, self._ip_or_hostname
+        )
+
+        if result:
+            self._connected = True
+        else:
+            raise InvalidAuthenticationError("Invalid Samba authentication")
+
+    async def async_disconnect(self) -> None:
+        """Disconnect from the Node."""
+        if not self._connected:
+            LOGGER.warning("Already disconnected!")
+            return
+
+        await self._execute_samba_operation(self._conn.close)
+        self._connected = False
+
+    async def async_get_history(
+        self, *, include_trends: bool = True, measurements_to_use: int = -1
+    ) -> dict[str, Any]:
+        """Get history data from the device."""
+        history_files = await self._async_get_history_files()
+        history_files.sort(key=lambda file: file.filename)
+
+        if not history_files:
+            raise NodeProError(
+                f"No history files found that match {SAMBA_HISTORY_PATTERN}"
+            )
+
+        data: dict[str, Any] = {}
+
+        tmp_file = tempfile.NamedTemporaryFile()
+        await self._async_store_filepath_in_tempfile(
+            f"/{history_files[-1].filename}", tmp_file
+        )
+        tmp_file.seek(0)
+        data["measurements"] = await self._async_retrieve_data_from_tempfile(tmp_file)
+        tmp_file.close()
+
         if include_trends:
             data["trends"] = _calculate_trends(
                 data["measurements"], measurements_to_use
             )
+
+        return data
+
+    async def async_get_latest_measurements(self) -> dict[str, Any]:
+        """Get the latest measurements from the device."""
+        data = {}
+
+        tmp_file = tempfile.NamedTemporaryFile()
+        await self._async_store_filepath_in_tempfile(
+            "/latest_config_measurements.json", tmp_file
+        )
+        tmp_file.seek(0)
+        raw = tmp_file.read()
+        tmp_file.close()
+        data = json.loads(raw.decode())
+
+        LOGGER.debug("Node measurements loaded: %s", data)
+
+        try:
+            # Handle a single measurement returned in a list:
+            measurements = data["measurements"][0].items()
+        except KeyError:
+            # Handle a single measurement returned as a standalone dict:
+            measurements = data["measurements"].items()
+
+        data["last_measurement_timestamp"] = int(data["date_and_time"]["timestamp"])
+        data["measurements"] = {
+            _get_normalized_metric_name(pollutant): value
+            for pollutant, value in measurements
+        }
+        data["status"]["sensor_life"] = {
+            _get_normalized_metric_name(pollutant): value
+            for pollutant, value in data["status"].get("sensor_life", {}).items()
+        }
 
         return data
