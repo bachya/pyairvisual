@@ -1,7 +1,7 @@
 """Define a series of endpoints for what locations are supported."""
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable
+from typing import Any, Awaitable, Callable, cast
 
 
 class Supported:
@@ -35,4 +35,4 @@ class Supported:
         data = await self._request(
             "get", "stations", params={"city": city, "state": state, "country": country}
         )
-        return data["data"]
+        return cast(list[dict[str, Any]], data["data"])
