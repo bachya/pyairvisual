@@ -1,12 +1,12 @@
 """Define tests for Node errors."""
 # pylint: disable=unused-argument
+from collections.abc import Generator
 from unittest.mock import Mock
 
 import pytest
 import smb
 
 from pyairvisual.node import InvalidAuthenticationError, NodeProError, NodeSamba
-
 from tests.common import TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
 
 
@@ -28,8 +28,15 @@ from tests.common import TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
         ),
     ],
 )
-async def test_connect_errors(error_str, setup_samba_connection):
-    """Test various errors arising during connection."""
+async def test_connect_errors(
+    error_str: str, setup_samba_connection: Generator  # noqa: F841
+) -> None:
+    """Test various errors arising during connection.
+
+    Args:
+        error_str: The logged error message.
+        setup_samba_connection: A mocked Samba connection.
+    """
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
     with pytest.raises(NodeProError) as err:
         await node.async_connect()
@@ -46,8 +53,12 @@ async def test_connect_errors(error_str, setup_samba_connection):
         Mock(side_effect=smb.smb_structs.ProtocolError),
     ],
 )
-async def test_history_errors(setup_samba_connection):
-    """Test various errors arising while getting history."""
+async def test_history_errors(setup_samba_connection: Generator) -> None:  # noqa: F841
+    """Test various errors arising while getting history.
+
+    Args:
+        setup_samba_connection: A mocked Samba connection.
+    """
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
     with pytest.raises(NodeProError):
         await node.async_connect()
@@ -56,8 +67,14 @@ async def test_history_errors(setup_samba_connection):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("mock_pysmb_connect", [Mock(return_value=False)])
-async def test_failed_authentication(setup_samba_connection):
-    """Test that failed authentication is caught."""
+async def test_failed_authentication(
+    setup_samba_connection: Generator,  # noqa: F841
+) -> None:
+    """Test that failed authentication is caught.
+
+    Args:
+        setup_samba_connection: A mocked Samba connection.
+    """
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
     with pytest.raises(InvalidAuthenticationError):
         await node.async_connect()
@@ -73,8 +90,14 @@ async def test_failed_authentication(setup_samba_connection):
         Mock(side_effect=smb.smb_structs.ProtocolError),
     ],
 )
-async def test_measurement_errors(setup_samba_connection):
-    """Test various errors arising while getting a file via Samba."""
+async def test_measurement_errors(
+    setup_samba_connection: Generator,  # noqa: F841
+) -> None:
+    """Test various errors arising while getting a file via Samba.
+
+    Args:
+        setup_samba_connection: A mocked Samba connection.
+    """
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
     with pytest.raises(NodeProError):
         await node.async_connect()
@@ -92,8 +115,14 @@ async def test_measurement_errors(setup_samba_connection):
         )
     ],
 )
-async def test_node_by_samba_no_history_files(setup_samba_connection):
-    """Test the Node/Pro not having any history files where expected."""
+async def test_node_by_samba_no_history_files(
+    setup_samba_connection: Generator,  # noqa: F841
+) -> None:
+    """Test the Node/Pro not having any history files where expected.
+
+    Args:
+        setup_samba_connection: A mocked Samba connection.
+    """
     with pytest.raises(NodeProError):
         async with NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD) as node:
             await node.async_get_history()

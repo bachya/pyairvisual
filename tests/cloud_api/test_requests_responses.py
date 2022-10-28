@@ -3,9 +3,9 @@ import json
 
 import aiohttp
 import pytest
+from aresponses import ResponsesMockServer
 
 from pyairvisual import CloudAPI
-
 from tests.common import (
     TEST_API_KEY,
     TEST_CITY,
@@ -19,8 +19,15 @@ from tests.common import (
 
 
 @pytest.mark.asyncio
-async def test_aqi_ranking(aresponses, city_ranking_response):
-    """Test getting AQI ranking by city."""
+async def test_aqi_ranking(
+    aresponses: ResponsesMockServer, city_ranking_response: str
+) -> None:
+    """Test getting AQI ranking by city.
+
+    Args:
+        aresponses: An aresponses server.
+        city_ranking_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/city_ranking",
@@ -42,8 +49,13 @@ async def test_aqi_ranking(aresponses, city_ranking_response):
 
 
 @pytest.mark.asyncio
-async def test_cities(aresponses, cities_response):
-    """Test getting a list of supported cities."""
+async def test_cities(aresponses: ResponsesMockServer, cities_response: str) -> None:
+    """Test getting a list of supported cities.
+
+    Args:
+        aresponses: An aresponses server.
+        cities_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/cities",
@@ -62,8 +74,15 @@ async def test_cities(aresponses, cities_response):
 
 
 @pytest.mark.asyncio
-async def test_city_by_coordinates(aresponses, city_response):
-    """Test getting the nearest city by latitude and longitude."""
+async def test_city_by_coordinates(
+    aresponses: ResponsesMockServer, city_response: str
+) -> None:
+    """Test getting the nearest city by latitude and longitude.
+
+    Args:
+        aresponses: An aresponses server.
+        city_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/nearest_city",
@@ -86,8 +105,13 @@ async def test_city_by_coordinates(aresponses, city_response):
 
 
 @pytest.mark.asyncio
-async def test_city_by_ip(aresponses, city_response):
-    """Test getting the nearest city by IP address."""
+async def test_city_by_ip(aresponses: ResponsesMockServer, city_response: str) -> None:
+    """Test getting the nearest city by IP address.
+
+    Args:
+        aresponses: An aresponses server.
+        city_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/nearest_city",
@@ -108,8 +132,15 @@ async def test_city_by_ip(aresponses, city_response):
 
 
 @pytest.mark.asyncio
-async def test_city_by_name(aresponses, city_response):
-    """Test getting a city by its name."""
+async def test_city_by_name(
+    aresponses: ResponsesMockServer, city_response: str
+) -> None:
+    """Test getting a city by its name.
+
+    Args:
+        aresponses: An aresponses server.
+        city_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/city",
@@ -133,8 +164,15 @@ async def test_city_by_name(aresponses, city_response):
 
 
 @pytest.mark.asyncio
-async def test_countries(aresponses, countries_response):
-    """Test getting a list of supported countries."""
+async def test_countries(
+    aresponses: ResponsesMockServer, countries_response: str
+) -> None:
+    """Test getting a list of supported countries.
+
+    Args:
+        aresponses: An aresponses server.
+        countries_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/countries",
@@ -153,8 +191,15 @@ async def test_countries(aresponses, countries_response):
 
 
 @pytest.mark.asyncio
-async def test_no_explicit_client_session(aresponses, city_ranking_response):
-    """Test not explicitly providing an aiohttp ClientSession."""
+async def test_no_explicit_client_session(
+    aresponses: ResponsesMockServer, city_ranking_response: str
+) -> None:
+    """Test not explicitly providing an aiohttp ClientSession.
+
+    Args:
+        aresponses: An aresponses server.
+        city_ranking_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/city_ranking",
@@ -175,8 +220,15 @@ async def test_no_explicit_client_session(aresponses, city_ranking_response):
 
 
 @pytest.mark.asyncio
-async def test_node_by_id(aresponses, node_by_id_response):
-    """Test getting a node's info by its ID from the cloud API."""
+async def test_node_by_id(
+    aresponses: ResponsesMockServer, node_by_id_response: str
+) -> None:
+    """Test getting a node's info by its ID from the cloud API.
+
+    Args:
+        aresponses: An aresponses server.
+        node_by_id_response: An API response payload.
+    """
     aresponses.add(
         "www.airvisual.com",
         "/api/v2/node/12345",
@@ -198,8 +250,13 @@ async def test_node_by_id(aresponses, node_by_id_response):
 
 
 @pytest.mark.asyncio
-async def test_states(aresponses, states_response):
-    """Test getting a list of supported states."""
+async def test_states(aresponses: ResponsesMockServer, states_response: str) -> None:
+    """Test getting a list of supported states.
+
+    Args:
+        aresponses: An aresponses server.
+        states_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/states",
@@ -218,8 +275,15 @@ async def test_states(aresponses, states_response):
 
 
 @pytest.mark.asyncio
-async def test_station_by_coordinates(aresponses, station_response):
-    """Test getting a station by latitude and longitude."""
+async def test_station_by_coordinates(
+    aresponses: ResponsesMockServer, station_response: str
+) -> None:
+    """Test getting a station by latitude and longitude.
+
+    Args:
+        aresponses: An aresponses server.
+        station_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/nearest_station",
@@ -242,8 +306,15 @@ async def test_station_by_coordinates(aresponses, station_response):
 
 
 @pytest.mark.asyncio
-async def test_station_by_ip(aresponses, station_response):
-    """Test getting a station by IP address."""
+async def test_station_by_ip(
+    aresponses: ResponsesMockServer, station_response: str
+) -> None:
+    """Test getting a station by IP address.
+
+    Args:
+        aresponses: An aresponses server.
+        station_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/nearest_station",
@@ -264,8 +335,15 @@ async def test_station_by_ip(aresponses, station_response):
 
 
 @pytest.mark.asyncio
-async def test_station_by_name(aresponses, station_response):
-    """Test getting a station by location name."""
+async def test_station_by_name(
+    aresponses: ResponsesMockServer, station_response: str
+) -> None:
+    """Test getting a station by location name.
+
+    Args:
+        aresponses: An aresponses server.
+        station_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/station",
@@ -291,8 +369,15 @@ async def test_station_by_name(aresponses, station_response):
 
 
 @pytest.mark.asyncio
-async def test_stations(aresponses, stations_response):
-    """Test getting a list of supported stations."""
+async def test_stations(
+    aresponses: ResponsesMockServer, stations_response: str
+) -> None:
+    """Test getting a list of supported stations.
+
+    Args:
+        aresponses: An aresponses server.
+        stations_response: An API response payload.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/stations",

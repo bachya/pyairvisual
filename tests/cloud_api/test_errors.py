@@ -1,8 +1,10 @@
 """Define tests for API errors."""
 import json
+from unittest.mock import Mock
 
 import aiohttp
 import pytest
+from aresponses import ResponsesMockServer
 
 from pyairvisual.cloud_api import (
     AirVisualError,
@@ -14,13 +16,16 @@ from pyairvisual.cloud_api import (
     NotFoundError,
     UnauthorizedError,
 )
-
 from tests.common import TEST_API_KEY
 
 
 @pytest.mark.asyncio
-async def test_invalid_json_response(aresponses):
-    """Test that the proper error is raised when the response text isn't JSON."""
+async def test_invalid_json_response(aresponses: ResponsesMockServer) -> None:
+    """Test that the proper error is raised when the response text isn't JSON.
+
+    Args:
+        aresponses: A callable that returns a ResponsesMockServer.
+    """
     aresponses.add(
         "www.airvisual.com",
         "/api/v2/node/12345",
@@ -53,9 +58,21 @@ async def test_invalid_json_response(aresponses):
     ],
 )
 async def test_errors(
-    aresponses, exception, request, response_text_fixture, status_code
-):
-    """Test various cloud API errors."""
+    aresponses: ResponsesMockServer,
+    exception: type[AirVisualError],
+    request: Mock,
+    response_text_fixture: str,
+    status_code: int,
+) -> None:
+    """Test various cloud API errors.
+
+    Args:
+        aresponses: An aresponses server.
+        exception: An API exception.
+        request: The pytest request fixture.
+        response_text_fixture: The fixture that returns an API response payload.
+        status_code: A response status code.
+    """
     aresponses.add(
         "api.airvisual.com",
         "/v2/nearest_city",

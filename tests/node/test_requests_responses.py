@@ -1,15 +1,24 @@
 """Define tests for Node errors."""
 # pylint: disable=unused-argument
+from collections.abc import Generator
+from unittest.mock import Mock
+
 import pytest
 
 from pyairvisual.node import NodeSamba
-
 from tests.common import TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
 
 
 @pytest.mark.asyncio
-async def test_duplicate_connection(caplog, setup_samba_connection):
-    """Test attempting to connect after we're already connected."""
+async def test_duplicate_connection(
+    caplog: Mock, setup_samba_connection: Generator  # noqa: F841
+) -> None:
+    """Test attempting to connect after we're already connected.
+
+    Args:
+        caplog: A mocked logging facility.
+        setup_samba_connection: A mocked Samba connection.
+    """
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
     await node.async_connect()
     await node.async_connect()
@@ -19,8 +28,15 @@ async def test_duplicate_connection(caplog, setup_samba_connection):
 
 
 @pytest.mark.asyncio
-async def test_duplicate_disconnection(caplog, setup_samba_connection):
-    """Test attempting to disconnect after we're already disconnected."""
+async def test_duplicate_disconnection(
+    caplog: Mock, setup_samba_connection: Generator  # noqa: F841
+) -> None:
+    """Test attempting to disconnect after we're already disconnected.
+
+    Args:
+        caplog: A mocked logging facility.
+        setup_samba_connection: A mocked Samba connection.
+    """
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
     await node.async_connect()
     await node.async_disconnect()
@@ -30,10 +46,15 @@ async def test_duplicate_disconnection(caplog, setup_samba_connection):
 
 
 @pytest.mark.asyncio
-async def test_node_by_samba_dict_response(setup_samba_connection):
+async def test_node_by_samba_dict_response(
+    setup_samba_connection: Generator,  # noqa: F841
+) -> None:
     """Test getting a node's info over the local network (via Samba).
 
     This variant of the test expects a dictionary-esque response from the unit.
+
+    Args:
+        setup_samba_connection: A mocked Samba connection.
     """
     async with NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD) as node:
         measurements = await node.async_get_latest_measurements()
@@ -65,8 +86,14 @@ async def test_node_by_samba_dict_response(setup_samba_connection):
 
 
 @pytest.mark.asyncio
-async def test_node_by_samba_fewer_trend_measurements(setup_samba_connection):
-    """Test getting a node's trends with a configured number of measurements."""
+async def test_node_by_samba_fewer_trend_measurements(
+    setup_samba_connection: Generator,  # noqa: F841
+) -> None:
+    """Test getting a node's trends with a configured number of measurements.
+
+    Args:
+        setup_samba_connection: A mocked Samba connection.
+    """
     async with NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD) as node:
         history = await node.async_get_history(measurements_to_use=3)
 
@@ -86,10 +113,15 @@ async def test_node_by_samba_fewer_trend_measurements(setup_samba_connection):
 @pytest.mark.parametrize(
     "node_measurements_file", ["node_measurements_samba_list_response.json"]
 )
-async def test_node_by_samba_list_response(setup_samba_connection):
+async def test_node_by_samba_list_response(
+    setup_samba_connection: Generator,  # noqa: F841
+) -> None:
     """Test getting a node's info over the local network (via Samba).
 
     This variant of the test expects a list-esque response from the unit.
+
+    Args:
+        setup_samba_connection: A mocked Samba connection.
     """
     async with NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD) as node:
         measurements = await node.async_get_latest_measurements()
@@ -124,8 +156,14 @@ async def test_node_by_samba_list_response(setup_samba_connection):
 @pytest.mark.parametrize(
     "node_measurements_file", ["node_measurements_samba_no_sensor_life_response.json"]
 )
-async def test_node_by_samba_no_sensor_life_data(setup_samba_connection):
-    """Test a proper response when no sensor life values are returned."""
+async def test_node_by_samba_no_sensor_life_data(
+    setup_samba_connection: Generator,  # noqa: F841
+) -> None:
+    """Test a proper response when no sensor life values are returned.
+
+    Args:
+        setup_samba_connection: A mocked Samba connection.
+    """
     async with NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD) as node:
         measurements = await node.async_get_latest_measurements()
 
