@@ -98,15 +98,15 @@ def raise_on_data_error(data: dict[str, Any]) -> None:
 
 
 class CloudAPI:  # pylint: disable=too-few-public-methods
-    """Define an object to work with the AirVisual Cloud API.
-
-    Args:
-        api_key: An API key.
-        session: An optional aiohttp ClientSession.
-    """
+    """Define an object to work with the AirVisual Cloud API."""
 
     def __init__(self, api_key: str, session: ClientSession | None = None) -> None:
-        """Initialize."""
+        """Initialize.
+
+        Args:
+            api_key: An API key.
+            session: An optional aiohttp ClientSession.
+        """
         self._api_key = api_key
         self._session: ClientSession | None = session
 

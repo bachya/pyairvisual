@@ -6,14 +6,14 @@ from typing import Any, cast
 
 
 class Supported:
-    """Define an object to supported location API calls.
-
-    Args:
-        request: The request method from the CloudAPI object.
-    """
+    """Define an object to supported location API calls."""
 
     def __init__(self, request: Callable[..., Awaitable]) -> None:
-        """Initialize."""
+        """Initialize.
+
+        Args:
+            request: The request method from the CloudAPI object.
+        """
         self._request = request
 
     async def cities(self, country: str, state: str) -> list[dict[str, Any]]:
