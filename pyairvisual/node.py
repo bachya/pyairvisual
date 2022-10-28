@@ -9,7 +9,7 @@ from collections import OrderedDict
 from collections.abc import Awaitable, Callable
 from functools import partial
 from types import TracebackType
-from typing import IO, Any, cast, overload
+from typing import IO, Any, TypeVar, cast, overload
 
 import numpy as np
 import smb
@@ -168,7 +168,13 @@ class NodeCloudAPI:  # pylint: disable=too-few-public-methods
         return cast(dict[str, Any], data)
 
 
-SambaOperationReturnType = int | list[smb.base.SharedFile] | list[dict[str, Any]] | None
+_SambaOperationReturnType = TypeVar(  # pylint: disable=invalid-name
+    "_SambaOperationReturnType",
+    int,
+    list[smb.base.SharedFile],
+    list[dict[str, Any]],
+    None,
+)
 
 
 class NodeSamba:
@@ -213,14 +219,14 @@ class NodeSamba:
 
     @overload
     async def _execute_samba_operation(
-        self, pysmb_func: Callable[..., SambaOperationReturnType]
+        self, pysmb_func: Callable[..., list[dict[str, Any]]]
     ) -> list[dict[str, Any]]:
         ...
 
     @overload
     async def _execute_samba_operation(
         self,
-        pysmb_func: Callable[[None], SambaOperationReturnType],
+        pysmb_func: Callable[[None], bool],
         ip_or_hostname: str,
     ) -> bool:
         ...
@@ -228,7 +234,7 @@ class NodeSamba:
     @overload
     async def _execute_samba_operation(
         self,
-        pysmb_func: Callable[[str, str, IO[bytes]], SambaOperationReturnType],
+        pysmb_func: Callable[[str, str, IO[bytes]], None],
         service: str,  # noqa: F841
         filepath: str,
         file_obj: IO[bytes],  # noqa: F841
@@ -238,7 +244,7 @@ class NodeSamba:
     @overload
     async def _execute_samba_operation(
         self,
-        pysmb_func: Callable[[str, str], SambaOperationReturnType],
+        pysmb_func: Callable[[str, str], list[smb.base.SharedFile]],
         service: str,  # noqa: F841
         filepath: str,
         *,
@@ -249,10 +255,10 @@ class NodeSamba:
 
     async def _execute_samba_operation(
         self,
-        pysmb_func: Callable[..., SambaOperationReturnType],
+        pysmb_func: Callable[..., _SambaOperationReturnType],
         *args: Any,
         **kwargs: Any,
-    ) -> SambaOperationReturnType:
+    ) -> _SambaOperationReturnType:
         """Guard a Samba command with appropriate error handling.
 
         Args:
@@ -268,7 +274,9 @@ class NodeSamba:
         """
         func_with_kwargs = partial(pysmb_func, **kwargs)
         try:
-            result = await self._loop.run_in_executor(None, func_with_kwargs, *args)
+            res = await self._loop.run_in_executor(  # type: ignore[func-returns-value]
+                None, func_with_kwargs, *args
+            )
         except smb.base.NotReadyError as err:
             raise NodeProError(f"The Node/Pro unit returned an error: {err}") from err
         except smb.base.SMBTimeout as err:
@@ -280,7 +288,7 @@ class NodeSamba:
         except Exception as err:  # pylint: disable=broad-except
             raise NodeProError(err) from err
 
-        return result
+        return res
 
     async def _async_get_history_files(self) -> list[smb.base.SharedFile]:
         """Return all the history files on a Samba device.
