@@ -145,14 +145,14 @@ def _get_normalized_metric_name(key: str) -> str:
 
 
 class NodeCloudAPI:  # pylint: disable=too-few-public-methods
-    """Define an object to work with getting Node info via the Cloud API."""
+    """Define an object to work with getting Node info via the Cloud API.
+
+    Args:
+        request: The request method from the CloudAPI object.
+    """
 
     def __init__(self, request: Callable[..., Awaitable]) -> None:
-        """Initialize.
-
-        Args:
-            request: The request method from the CloudAPI object.
-        """
+        """Initialize."""
         self._request = request
 
     async def get_by_node_id(self, node_id: str) -> dict[str, Any]:
@@ -178,15 +178,15 @@ _SambaOperationReturnType = TypeVar(  # pylint: disable=invalid-name
 
 
 class NodeSamba:
-    """Define an object to work with getting Node info over Samba."""
+    """Define an object to work with getting Node info over Samba.
+
+    Args:
+        ip_or_hostname: An IP address or hostname to a Node.
+        password: A Samba password for a Node.
+    """
 
     def __init__(self, ip_or_hostname: str, password: str) -> None:
-        """Initialize.
-
-        Args:
-            ip_or_hostname: An IP address or hostname to a Node.
-            password: A Samba password for a Node.
-        """
+        """Initialize."""
         self._conn = SMBConnection(SMB_USERNAME, password, "pyairvisual", SMB_SERVICE)
         self._connected = False
         self._ip_or_hostname = ip_or_hostname

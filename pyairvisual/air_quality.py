@@ -6,14 +6,14 @@ from typing import Any, cast
 
 
 class AirQuality:
-    """Define an object to manage air quality API calls."""
+    """Define an object to manage air quality API calls.
+
+    Args:
+        request: The request method from the CloudAPI object.
+    """
 
     def __init__(self, request: Callable[..., Awaitable]) -> None:
-        """Initialize.
-
-        Args:
-            request: The request method from the CloudAPI object.
-        """
+        """Initialize."""
         self._request = request
 
     async def _nearest(
