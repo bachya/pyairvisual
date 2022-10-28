@@ -2,13 +2,14 @@
 from __future__ import annotations
 
 import asyncio
-from collections import OrderedDict
 import csv
-from functools import partial
 import json
 import tempfile
+from collections import OrderedDict
+from collections.abc import Awaitable, Callable
+from functools import partial
 from types import TracebackType
-from typing import IO, Any, Awaitable, Callable, Union, cast, overload
+from typing import IO, Any, cast, overload
 
 import numpy as np
 import smb
@@ -82,7 +83,15 @@ class InvalidAuthenticationError(NodeProError):
 def _calculate_trends(
     history: list[OrderedDict], measurements_to_use: int
 ) -> dict[str, Any]:
-    """Calculate the trends of all data points in history data."""
+    """Calculate the trends of all data points in history data.
+
+    Args:
+        history: A list of dict-based measurements.
+        measurements_to_use: The number of measurements to include (-1 for all)
+
+    Returns:
+        An API response payload.
+    """
     if measurements_to_use == -1:
         index_range = np.arange(0, len(history))
     else:
@@ -124,7 +133,14 @@ def _calculate_trends(
 
 
 def _get_normalized_metric_name(key: str) -> str:
-    """Return a normalized string (if it exists) for a metric."""
+    """Return a normalized string (if it exists) for a metric.
+
+    Args:
+        key: A metric name to examine.
+
+    Returns:
+        A normalized metric name or the original.
+    """
     return METRIC_MAPPING.get(key, key)
 
 
@@ -132,43 +148,67 @@ class NodeCloudAPI:  # pylint: disable=too-few-public-methods
     """Define an object to work with getting Node info via the Cloud API."""
 
     def __init__(self, request: Callable[..., Awaitable]) -> None:
-        """Initialize."""
+        """Initialize.
+
+        Args:
+            request: The request method from the CloudAPI object.
+        """
         self._request = request
 
     async def get_by_node_id(self, node_id: str) -> dict[str, Any]:
-        """Return cloud API data from a node its ID."""
+        """Return cloud API data from a node its ID.
+
+        Args:
+            node_id: A Node ID.
+
+        Returns:
+            An API response payload.
+        """
         data = await self._request("get", node_id, base_url=API_URL_BASE)
         return cast(dict[str, Any], data)
 
 
-SambaOperationReturnType = Union[
-    None, int, list[smb.base.SharedFile], list[dict[str, Any]]
-]
+SambaOperationReturnType = int | list[smb.base.SharedFile] | list[dict[str, Any]] | None
 
 
 class NodeSamba:
     """Define an object to work with getting Node info over Samba."""
 
     def __init__(self, ip_or_hostname: str, password: str) -> None:
-        """Initialize."""
+        """Initialize.
+
+        Args:
+            ip_or_hostname: An IP address or hostname to a Node.
+            password: A Samba password for a Node.
+        """
         self._conn = SMBConnection(SMB_USERNAME, password, "pyairvisual", SMB_SERVICE)
         self._connected = False
         self._ip_or_hostname = ip_or_hostname
         self._latest_history = None
         self._loop = asyncio.get_event_loop()
 
-    async def __aenter__(self) -> "NodeSamba":
-        """Handle the start of a context manager."""
+    async def __aenter__(self) -> NodeSamba:
+        """Handle the start of a context manager.
+
+        Returns:
+            A connected NodeSamba object.
+        """
         await self.async_connect()
         return self
 
     async def __aexit__(
         self,
-        exc_type: type[BaseException] | None,
-        exc_val: BaseException | None,
-        exc_tb: TracebackType | None,
+        exc_type: type[BaseException] | None,  # noqa: F841
+        exc_val: BaseException | None,  # noqa: F841
+        exc_tb: TracebackType | None,  # noqa: F841
     ) -> None:
-        """Handle the end of a context manager."""
+        """Handle the end of a context manager.
+
+        Args:
+            exc_type: An optional exception if one caused the context manager to close.
+            exc_val: The value of the optional exception
+            exc_tb: The traceback of the optional exception
+        """
         await self.async_disconnect()
 
     @overload
@@ -189,9 +229,9 @@ class NodeSamba:
     async def _execute_samba_operation(
         self,
         pysmb_func: Callable[[str, str, IO[bytes]], SambaOperationReturnType],
-        service: str,
+        service: str,  # noqa: F841
         filepath: str,
-        file_obj: IO[bytes],
+        file_obj: IO[bytes],  # noqa: F841
     ) -> None:
         ...
 
@@ -199,11 +239,11 @@ class NodeSamba:
     async def _execute_samba_operation(
         self,
         pysmb_func: Callable[[str, str], SambaOperationReturnType],
-        service: str,
+        service: str,  # noqa: F841
         filepath: str,
         *,
-        pattern: str | None = None,
-        search: str | None = None,
+        pattern: str | None = None,  # noqa: F841
+        search: str | None = None,  # noqa: F841
     ) -> list[smb.base.SharedFile]:
         ...
 
@@ -213,7 +253,19 @@ class NodeSamba:
         *args: Any,
         **kwargs: Any,
     ) -> SambaOperationReturnType:
-        """Guard a Samba command with appropriate error handling."""
+        """Guard a Samba command with appropriate error handling.
+
+        Args:
+            pysmb_func: A pysmb function to run.
+            *args: Any args to pass to the pysmb function.
+            **kwargs: Any kwargs to pass to the pysmb function.
+
+        Returns:
+            Any type supported by pysmb operations.
+
+        Raises:
+            NodeProError: Any Samba-related error.
+        """
         func_with_kwargs = partial(pysmb_func, **kwargs)
         try:
             result = await self._loop.run_in_executor(None, func_with_kwargs, *args)
@@ -231,7 +283,11 @@ class NodeSamba:
         return result
 
     async def _async_get_history_files(self) -> list[smb.base.SharedFile]:
-        """Return all the history files on a Samba device."""
+        """Return all the history files on a Samba device.
+
+        Returns:
+            A list of Samba file references.
+        """
         return await self._execute_samba_operation(
             self._conn.listPath,
             SMB_SERVICE,
@@ -243,10 +299,21 @@ class NodeSamba:
     async def _async_retrieve_data_from_tempfile(
         self, tmp_file: IO[bytes]
     ) -> list[dict[str, Any]]:
-        """Retrieve data from a NamedTemporaryFile."""
+        """Retrieve data from a NamedTemporaryFile.
+
+        Args:
+            tmp_file: A reference to a NamedTemporaryFile.
+
+        Returns:
+            An API response payload.
+        """
 
         def get_data() -> list[dict[str, Any]]:
-            """Get the data."""
+            """Get the data.
+
+            Returns:
+                An API response payload.
+            """
             data = []
             with open(tmp_file.name, encoding="utf-8") as file:
                 reader = csv.DictReader(file, delimiter=";")
@@ -266,13 +333,23 @@ class NodeSamba:
     async def _async_store_filepath_in_tempfile(
         self, filepath: str, tmp_file: IO[bytes]
     ) -> None:
-        """Save a file to a NamedTemporaryFile object."""
+        """Save a file to a NamedTemporaryFile object.
+
+        Args:
+            filepath: A filepath on the Node Samba share.
+            tmp_file: A reference to a NamedTemporaryFile.
+        """
         await self._execute_samba_operation(
             self._conn.retrieveFile, SMB_SERVICE, filepath, tmp_file
         )
 
     async def async_connect(self) -> None:
-        """Connect to the Node."""
+        """Connect to the Node.
+
+        Raises:
+            InvalidAuthenticationError: Raised when the provided Samba password
+                is incorrect.
+        """
         if self._connected:
             LOGGER.warning("Already connected!")
             return
@@ -298,7 +375,18 @@ class NodeSamba:
     async def async_get_history(
         self, *, include_trends: bool = True, measurements_to_use: int = -1
     ) -> dict[str, Any]:
-        """Get history data from the device."""
+        """Get history data from the device.
+
+        Args:
+            include_trends: Whether trend data should be included.
+            measurements_to_use: The number of measurements to include (-1 for all)
+
+        Returns:
+            An API response payload.
+
+        Raises:
+            NodeProError: Raised when no history files are found.
+        """
         history_files = await self._async_get_history_files()
         history_files.sort(key=lambda file: file.filename)  # type: ignore
 
@@ -309,7 +397,7 @@ class NodeSamba:
 
         data: dict[str, Any] = {}
 
-        tmp_file = tempfile.NamedTemporaryFile()
+        tmp_file = tempfile.NamedTemporaryFile()  # pylint: disable=consider-using-with
         await self._async_store_filepath_in_tempfile(
             f"/{history_files[-1].filename}", tmp_file
         )
@@ -325,7 +413,11 @@ class NodeSamba:
         return data
 
     async def async_get_latest_measurements(self) -> dict[str, Any]:
-        """Get the latest measurements from the device."""
+        """Get the latest measurements from the device.
+
+        Returns:
+            An API response payload.
+        """
         data = {}
 
         tmp_file = tempfile.NamedTemporaryFile()

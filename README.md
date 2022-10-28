@@ -16,25 +16,25 @@
 - [Python Versions](#python-versions)
 - [Installation](#installation)
 - [API Key](#api-key)
-  * [Community](#community)
-  * [Startup](#startup)
-  * [Enterprise](#enterprise)
+  - [Community](#community)
+  - [Startup](#startup)
+  - [Enterprise](#enterprise)
 - [Usage](#usage)
-  * [Using the Cloud API](#using-the-cloud-api)
-  * [Working with Node/Pro Units](#working-with-node-pro-units)
+  - [Using the Cloud API](#using-the-cloud-api)
+  - [Working with Node/Pro Units](#working-with-node-pro-units)
 - [Contributing](#contributing)
 
 # Python Versions
 
 `pyairvisual` is currently supported on:
 
-* Python 3.9
-* Python 3.10
-* Python 3.11
+- Python 3.9
+- Python 3.10
+- Python 3.11
 
 # Installation
 
-```python
+```bash
 pip install pyairvisual
 ```
 
@@ -48,27 +48,27 @@ the plan you choose, more functionality will be available from the API:
 
 The Community Plan gives access to:
 
-* List supported countries
-* List supported states
-* List supported cities
-* Get data from the nearest city based on IP address
-* Get data from the nearest city based on latitude/longitude
-* Get data from a specific city
+- List supported countries
+- List supported states
+- List supported cities
+- Get data from the nearest city based on IP address
+- Get data from the nearest city based on latitude/longitude
+- Get data from a specific city
 
 ## Startup
 
 The Startup Plan gives access to:
 
-* List supported stations in a city
-* Get data from the nearest station based on IP address
-* Get data from the nearest station based on latitude/longitude
-* Get data from a specific station
+- List supported stations in a city
+- Get data from the nearest station based on IP address
+- Get data from the nearest station based on latitude/longitude
+- Get data from a specific station
 
 ## Enterprise
 
 The Enterprise Plan gives access to:
 
-* Get a global city ranking of air quality
+- Get a global city ranking of air quality
 
 # Usage
 
@@ -205,14 +205,14 @@ signatures and more examples.
 # Contributing
 
 1. [Check for open features/bugs](https://github.com/bachya/pyairvisual/issues)
-  or [initiate a discussion on one](https://github.com/bachya/pyairvisual/issues/new).
+   or [initiate a discussion on one](https://github.com/bachya/pyairvisual/issues/new).
 2. [Fork the repository](https://github.com/bachya/pyairvisual/fork).
 3. (_optional, but highly recommended_) Create a virtual environment: `python3 -m venv .venv`
 4. (_optional, but highly recommended_) Enter the virtual environment: `source ./.venv/bin/activate`
 5. Install the dev environment: `script/setup`
 6. Code your new feature or bug fix.
 7. Write tests that cover your new functionality.
-8. Run tests and ensure 100% code coverage: `nox -rs coverage`
+8. Run tests and ensure 100% code coverage: `poetry run pytest --cov`
 9. Update `README.md` with any new documentation.
 10. Add yourself to `AUTHORS.md`.
 11. Submit a pull request!

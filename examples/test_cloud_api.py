@@ -12,7 +12,7 @@ API_KEY = "<API_KEY>"
 NODE_PRO_ID = "<NODE_PRO_ID>"
 
 
-async def main() -> None:
+async def main() -> None:  # noqa: C901
     """Create the aiohttp session and run the example."""
     logging.basicConfig(level=logging.INFO)
     async with ClientSession() as session:

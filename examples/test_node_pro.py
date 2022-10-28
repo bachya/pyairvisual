@@ -7,7 +7,7 @@ from pyairvisual.node import NodeProError, NodeSamba
 _LOGGER = logging.getLogger(__name__)
 
 NODE_PRO_IP_ADDRESS = "<NODE_PRO_IP_ADDRESS>"
-NODE_PRO_PASSWORD = "<NODE_PRO_PASSWORD>"
+NODE_PRO_PASSWORD = "<NODE_PRO_PASSWORD>"  # noqa: S105
 
 
 async def main() -> None:

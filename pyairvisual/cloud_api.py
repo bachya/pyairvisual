@@ -79,7 +79,14 @@ ERROR_CODES: dict[str, type[AirVisualError]] = {
 
 
 def raise_on_data_error(data: dict[str, Any]) -> None:
-    """Raise an error if the data payload suggests there is one."""
+    """Raise an error if the data payload suggests there is one.
+
+    Args:
+        data: A response data payload from the API.
+
+    Raises:
+        error: An appropriate API error (a subclass of AirVisualError).
+    """
     if "data" not in data or data.get("status") == "success":
         return
 
@@ -93,8 +100,13 @@ def raise_on_data_error(data: dict[str, Any]) -> None:
 class CloudAPI:  # pylint: disable=too-few-public-methods
     """Define an object to work with the AirVisual Cloud API."""
 
-    def __init__(self, api_key: str, session: ClientSession = None) -> None:
-        """Initialize."""
+    def __init__(self, api_key: str, session: ClientSession | None = None) -> None:
+        """Initialize.
+
+        Args:
+            api_key: An API key.
+            session: An optional aiohttp ClientSession.
+        """
         self._api_key = api_key
         self._session: ClientSession | None = session
 
@@ -110,23 +122,29 @@ class CloudAPI:  # pylint: disable=too-few-public-methods
         base_url: str = API_URL_BASE,
         **kwargs: dict[str, Any],
     ) -> dict[str, Any]:
-        """Make a request against the API."""
+        """Make a request against the API.
+
+        Args:
+            method: An HTTP method.
+            endpoint: A relative API endpoint to query.
+            base_url: The base API URL to use.
+            **kwargs: Extra arguments to send with the API request.
+
+        Returns:
+            An API response payload.
+        """
         kwargs.setdefault("headers", {})
         kwargs["headers"]["Content-Type"] = "application/json"
 
         kwargs.setdefault("params", {})
         kwargs["params"]["key"] = self._api_key
 
-        use_running_session = self._session and not self._session.closed
-
-        if use_running_session:
+        if use_running_session := self._session and not self._session.closed:
             session = self._session
         else:
             session = ClientSession(
                 timeout=ClientTimeout(total=DEFAULT_REQUEST_TIMEOUT)
             )
-
-        assert session
 
         try:
             async with session.request(

@@ -8,10 +8,7 @@
     "country": "China",
     "location": {
       "type": "Point",
-      "coordinates": [
-        116.466258,
-        39.954352
-      ]
+      "coordinates": [116.466258, 39.954352]
     },
     "forecasts": [
       {
