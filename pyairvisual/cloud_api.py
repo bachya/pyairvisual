@@ -70,6 +70,7 @@ ERROR_CODES: dict[str, type[AirVisualError]] = {
     "call_limit_reached": LimitReachedError,
     "city_not_found": NotFoundError,
     "feature_not_available": UnauthorizedError,
+    "forbidden": UnauthorizedError,
     "incorrect_api_key": InvalidKeyError,
     "no_nearest_station": NoStationError,
     "node not found": NotFoundError,
@@ -91,7 +92,9 @@ def raise_on_data_error(data: dict[str, Any]) -> None:
         return
 
     try:
-        [error] = [v for k, v in ERROR_CODES.items() if k in data["data"]["message"]]
+        [error] = [
+            v for k, v in ERROR_CODES.items() if k in data["data"]["message"].lower()
+        ]
     except ValueError:
         error = AirVisualError
     raise error(data)
