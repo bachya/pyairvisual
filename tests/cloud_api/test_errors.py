@@ -48,12 +48,14 @@ async def test_invalid_json_response(aresponses: ResponsesMockServer) -> None:
     "response_text_fixture,status_code,exception",
     [
         ("error_city_not_found_response", 400, NotFoundError),
+        ("error_forbidden_response", 403, UnauthorizedError),
         ("error_generic_response", 404, AirVisualError),
         ("error_incorrect_api_key_response", 401, InvalidKeyError),
         ("error_key_expired_response", 401, KeyExpiredError),
         ("error_limit_reached_response", 429, LimitReachedError),
         ("error_no_nearest_station_response", 404, NoStationError),
         ("error_node_not_found_response", 404, NotFoundError),
+        ("error_payment_required_response", 403, InvalidKeyError),
         ("error_permission_denied_response", 403, UnauthorizedError),
     ],
 )
