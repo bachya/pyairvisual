@@ -54,6 +54,16 @@ def error_city_not_found_response_fixture() -> str:
     return load_fixture("error_city_not_found_response.json")
 
 
+@pytest.fixture(name="error_forbidden_response", scope="session")
+def error_forbidden_response_fixture() -> str:
+    """Define a fixture for error response data (forbidden).
+
+    Returns:
+        An API response payload.
+    """
+    return load_fixture("error_forbidden_response.json")
+
+
 @pytest.fixture(name="error_generic_response", scope="session")
 def error_generic_response_fixture() -> str:
     """Define a fixture for error response data (generic).
@@ -112,6 +122,16 @@ def error_node_not_found_response_fixture() -> str:
         An API response payload.
     """
     return '"node not found"'
+
+
+@pytest.fixture(name="error_payment_required_response", scope="session")
+def error_payment_required_response_fixture() -> str:
+    """Define a fixture for error response data (payment required).
+
+    Returns:
+        An API response payload.
+    """
+    return load_fixture("error_payment_required_response.json")
 
 
 @pytest.fixture(name="error_permission_denied_response", scope="session")

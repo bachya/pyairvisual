@@ -74,6 +74,7 @@ ERROR_CODES: dict[str, type[AirVisualError]] = {
     "incorrect_api_key": InvalidKeyError,
     "no_nearest_station": NoStationError,
     "node not found": NotFoundError,
+    "payment required": InvalidKeyError,
     "permission_denied": UnauthorizedError,
     "too_many_requests": LimitReachedError,
 }
