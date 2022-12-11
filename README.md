@@ -1,17 +1,16 @@
 # ☀️ pyairvisual: a thin Python wrapper for the AirVisual© API
 
-[![CI](https://github.com/bachya/pyairvisual/workflows/CI/badge.svg)](https://github.com/bachya/pyairvisual/actions)
-[![PyPi](https://img.shields.io/pypi/v/pyairvisual.svg)](https://pypi.python.org/pypi/pyairvisual)
-[![Version](https://img.shields.io/pypi/pyversions/pyairvisual.svg)](https://pypi.python.org/pypi/pyairvisual)
-[![License](https://img.shields.io/pypi/l/pyairvisual.svg)](https://github.com/bachya/pyairvisual/blob/main/LICENSE)
-[![Code Coverage](https://codecov.io/gh/bachya/pyairvisual/branch/dev/graph/badge.svg)](https://codecov.io/gh/bachya/pyairvisual)
-[![Maintainability](https://api.codeclimate.com/v1/badges/948e4e3c84e5c49826f1/maintainability)](https://codeclimate.com/github/bachya/pyairvisual/maintainability)
-[![Say Thanks](https://img.shields.io/badge/SayThanks-!-1EAEDB.svg)](https://saythanks.io/to/bachya)
+[![CI][ci-badge]][ci]
+[![PyPI][pypi-badge]][pypi]
+[![Version][version-badge]][version]
+[![License][license-badge]][license]
+[![Code Coverage][codecov-badge]][codecov]
+[![Maintainability][maintainability-badge]][maintainability]
 
 <a href="https://www.buymeacoffee.com/bachya1208P" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
 `pyairvisual` is a simple, clean, well-tested library for interacting with
-[AirVisual](https://www.airvisual.com/) to retrieve air quality information.
+[AirVisual][airvisual] to retrieve air quality information.
 
 - [Python Versions](#python-versions)
 - [Installation](#installation)
@@ -40,9 +39,8 @@ pip install pyairvisual
 
 # API Key
 
-You can get an AirVisual API key from
-[the AirVisual API site](https://www.airvisual.com/user/api). Depending on
-the plan you choose, more functionality will be available from the API:
+You can get an AirVisual API key from [the AirVisual API site][airvisual-api].
+Depending on the plan you choose, more functionality will be available from the API:
 
 ## Community
 
@@ -125,9 +123,8 @@ asyncio.run(main())
 
 By default, the library creates a new connection to AirVisual with each coroutine. If
 you are calling a large number of coroutines (or merely want to squeeze out every second
-of runtime savings possible), an
-[`aiohttp`](https://github.com/aio-libs/aiohttp) `ClientSession` can be used for connection
-pooling:
+of runtime savings possible), an [`aiohttp`][aiohttp] `ClientSession` can be used for
+connection pooling:
 
 ```python
 import asyncio
@@ -150,8 +147,8 @@ asyncio.run(main())
 
 ## Working with Node/Pro Units
 
-`pyairvisual` also allows users to interact with
-[Node/Pro units](https://www.airvisual.com/air-quality-monitor), both via the cloud API:
+`pyairvisual` also allows users to interact with [Node/Pro units][airvisual-pro], both via
+the cloud API:
 
 ```python
 import asyncio
@@ -174,7 +171,7 @@ asyncio.run(main())
 ```
 
 ...or over the local network via Samba (the unit password can be found
-[on the device itself](https://support.airvisual.com/en/articles/3029331-download-the-airvisual-node-pro-s-data-using-samba)):
+[on the device itself][airvisual-samba-instructions]):
 
 ```python
 import asyncio
@@ -204,15 +201,38 @@ signatures and more examples.
 
 # Contributing
 
-1. [Check for open features/bugs](https://github.com/bachya/pyairvisual/issues)
-   or [initiate a discussion on one](https://github.com/bachya/pyairvisual/issues/new).
-2. [Fork the repository](https://github.com/bachya/pyairvisual/fork).
+Thanks to all of [our contributors][contributors] so far!
+
+1. [Check for open features/bugs][issues] or [initiate a discussion on one][new-issue].
+2. [Fork the repository][fork].
 3. (_optional, but highly recommended_) Create a virtual environment: `python3 -m venv .venv`
 4. (_optional, but highly recommended_) Enter the virtual environment: `source ./.venv/bin/activate`
 5. Install the dev environment: `script/setup`
-6. Code your new feature or bug fix.
+6. Code your new feature or bug fix on a new branch.
 7. Write tests that cover your new functionality.
 8. Run tests and ensure 100% code coverage: `poetry run pytest --cov pyairvisual tests`
 9. Update `README.md` with any new documentation.
-10. Add yourself to `AUTHORS.md`.
-11. Submit a pull request!
+10. Submit a pull request!
+
+[aiohttp]: https://github.com/aio-libs/aiohttp
+[airvisual]: https://www.airvisual.com/
+[airvisual-api]: https://www.airvisual.com/user/api
+[airvisual-pro]: https://www.airvisual.com/air-quality-monitor
+[airvisual-samba-instructions]: https://support.airvisual.com/en/articles/3029331-download-the-airvisual-node-pro-s-data-using-samba
+[ci-badge]: https://github.com/bachya/pyairvisual/workflows/CI/badge.svg
+[ci]: https://github.com/bachya/pyairvisual/actions
+[codecov-badge]: https://codecov.io/gh/bachya/pyairvisual/branch/dev/graph/badge.svg
+[codecov]: https://codecov.io/gh/bachya/pyairvisual
+[contributors]: https://github.com/bachya/pyairvisual/graphs/contributors
+[fork]: https://github.com/bachya/pyairvisual/fork
+[issues]: https://github.com/bachya/pyairvisual/issues
+[license-badge]: https://img.shields.io/pypi/l/pyairvisual.svg
+[license]: https://github.com/bachya/pyairvisual/blob/main/LICENSE
+[maintainability-badge]: https://api.codeclimate.com/v1/badges/a03c9e96f19a3dc37f98/maintainability
+[maintainability]: https://codeclimate.com/github/bachya/pyairvisual/maintainability
+[new-issue]: https://github.com/bachya/pyairvisual/issues/new
+[new-issue]: https://github.com/bachya/pyairvisual/issues/new
+[pypi-badge]: https://img.shields.io/pypi/v/pyairvisual.svg
+[pypi]: https://pypi.python.org/pypi/pyairvisual
+[version-badge]: https://img.shields.io/pypi/pyversions/pyairvisual.svg
+[version]: https://pypi.python.org/pypi/pyairvisual
