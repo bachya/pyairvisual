@@ -1,5 +1,6 @@
 """Define tests for Node errors."""
 # pylint: disable=unused-argument
+import logging
 from collections.abc import Generator
 from unittest.mock import Mock
 
@@ -19,6 +20,8 @@ async def test_duplicate_connection(
         caplog: A mocked logging facility.
         setup_samba_connection: A mocked Samba connection.
     """
+    caplog.set_level(logging.DEBUG)
+
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
     await node.async_connect()
     await node.async_connect()
@@ -37,6 +40,8 @@ async def test_duplicate_disconnection(
         caplog: A mocked logging facility.
         setup_samba_connection: A mocked Samba connection.
     """
+    caplog.set_level(logging.DEBUG)
+
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
     await node.async_connect()
     await node.async_disconnect()
