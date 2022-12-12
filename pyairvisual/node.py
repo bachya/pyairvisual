@@ -373,7 +373,7 @@ class NodeSamba:
                 is incorrect.
         """
         if self._connected:
-            LOGGER.warning("Already connected!")
+            LOGGER.debug("Already connected!")
             return
 
         result = await self._execute_samba_operation(
@@ -388,7 +388,7 @@ class NodeSamba:
     async def async_disconnect(self) -> None:
         """Disconnect from the Node."""
         if not self._connected:
-            LOGGER.warning("Already disconnected!")
+            LOGGER.debug("Already disconnected!")
             return
 
         await self._execute_samba_operation(self._conn.close)
