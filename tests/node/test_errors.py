@@ -6,39 +6,50 @@ from unittest.mock import Mock
 import pytest
 import smb
 
-from pyairvisual.node import InvalidAuthenticationError, NodeProError, NodeSamba
+from pyairvisual.node import (
+    InvalidAuthenticationError,
+    NodeConnectionError,
+    NodeProError,
+    NodeSamba,
+)
 from tests.common import TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "mock_pysmb_connect,error_str",
+    "mock_pysmb_connect,exc,error_str",
     [
         (
             Mock(side_effect=smb.base.NotReadyError),
-            "The Node/Pro unit returned an error:",
+            InvalidAuthenticationError,
+            "The Pro unit returned an authentication error",
         ),
         (
             Mock(side_effect=smb.base.SMBTimeout),
-            "Timed out while talking to the Node/Pro unit",
+            NodeConnectionError,
+            "Timed out while talking to the Pro unit",
         ),
         (
             Mock(side_effect=ConnectionRefusedError),
-            "Couldn't find a Node/Pro unit at the provided IP address",
+            NodeConnectionError,
+            "Couldn't find a Pro unit at the provided IP address",
         ),
     ],
 )
 async def test_connect_errors(
-    error_str: str, setup_samba_connection: Generator  # noqa: F841
+    error_str: str,
+    exc: type[NodeProError],
+    setup_samba_connection: Generator,  # noqa: F841
 ) -> None:
     """Test various errors arising during connection.
 
     Args:
         error_str: The logged error message.
+        exc: A raised exception (based on NodeProError).
         setup_samba_connection: A mocked Samba connection.
     """
     node = NodeSamba(TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD)
-    with pytest.raises(NodeProError) as err:
+    with pytest.raises(exc) as err:
         await node.async_connect()
     assert error_str in str(err)
 

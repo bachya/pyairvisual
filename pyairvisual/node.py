@@ -74,6 +74,12 @@ class NodeProError(AirVisualError):
     pass
 
 
+class NodeConnectionError(NodeProError):
+    """Define an error connection issues."""
+
+    pass
+
+
 class InvalidAuthenticationError(NodeProError):
     """Define an error for invalid authentication."""
 
@@ -270,20 +276,28 @@ class NodeSamba:
             Any type supported by pysmb operations.
 
         Raises:
-            NodeProError: Any Samba-related error.
+            InvalidAuthenticationError: Raised on invalid Samba auth.
+            NodeConnectionError: Raised on any Samba connection-related error.
+            NodeProError: Raised on any unknown error.
         """
         func_with_kwargs = partial(pysmb_func, **kwargs)
         try:
             res = await self._loop.run_in_executor(  # type: ignore[func-returns-value]
                 None, func_with_kwargs, *args
             )
+        except smb.base.NotConnectedError as err:
+            raise NodeConnectionError(f"The Pro unit is not connected: {err}") from err
         except smb.base.NotReadyError as err:
-            raise NodeProError(f"The Node/Pro unit returned an error: {err}") from err
+            raise InvalidAuthenticationError(
+                f"The Pro unit returned an authentication error: {err}"
+            ) from err
         except smb.base.SMBTimeout as err:
-            raise NodeProError("Timed out while talking to the Node/Pro unit") from err
+            raise NodeConnectionError(
+                "Timed out while talking to the Pro unit"
+            ) from err
         except ConnectionRefusedError as err:
-            raise NodeProError(
-                "Couldn't find a Node/Pro unit at the provided IP address"
+            raise NodeConnectionError(
+                "Couldn't find a Pro unit at the provided IP address"
             ) from err
         except Exception as err:  # pylint: disable=broad-except
             raise NodeProError(err) from err
