@@ -20,6 +20,8 @@ from .errors import AirVisualError
 
 API_URL_BASE = "https://www.airvisual.com/api/v2/node"
 
+DEFAULT_CONNECT_TIMEOUT = 10
+
 SAMBA_HISTORY_PATTERN = "*_AirVisual_values.txt"
 SMB_SERVICE = "airvisual"
 SMB_USERNAME = "airvisual"
@@ -234,6 +236,8 @@ class NodeSamba:
         self,
         pysmb_func: Callable[[None], bool],
         ip_or_hostname: str,
+        *,
+        timeout: int = DEFAULT_CONNECT_TIMEOUT,
     ) -> bool:
         ...
 
@@ -365,8 +369,11 @@ class NodeSamba:
             self._conn.retrieveFile, SMB_SERVICE, filepath, tmp_file
         )
 
-    async def async_connect(self) -> None:
+    async def async_connect(self, *, timeout: int = DEFAULT_CONNECT_TIMEOUT) -> None:
         """Connect to the Node.
+
+        Args:
+            timeout: The number of seconds before timing out the connection attempt.
 
         Raises:
             InvalidAuthenticationError: Raised when the provided Samba password
@@ -377,7 +384,7 @@ class NodeSamba:
             return
 
         result = await self._execute_samba_operation(
-            self._conn.connect, self._ip_or_hostname
+            self._conn.connect, self._ip_or_hostname, timeout=timeout
         )
 
         if result:
