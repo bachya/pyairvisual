@@ -417,7 +417,7 @@ class NodeSamba:
             NodeProError: Raised when no history files are found.
         """
         history_files = await self._async_get_history_files()
-        history_files.sort(key=lambda file: file.filename)  # type: ignore
+        history_files.sort(key=lambda file: file.filename)
 
         if not history_files:
             raise NodeProError(
