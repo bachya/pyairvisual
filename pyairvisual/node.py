@@ -426,13 +426,17 @@ class NodeSamba:
 
         data: dict[str, Any] = {}
 
-        for index in range(len(history_files)):
-            tmp_file = tempfile.NamedTemporaryFile()  # pylint: disable=consider-using-with
+        for history_file in history_files:
+            tmp_file = (
+                tempfile.NamedTemporaryFile()  # pylint: disable=consider-using-with
+            )
             await self._async_store_filepath_in_tempfile(
-                f"/{history_files[index].filename}", tmp_file
+                f"/{history_file.filename}", tmp_file
             )
             tmp_file.seek(0)
-            data["measurements"] = await self._async_retrieve_data_from_tempfile(tmp_file)
+            data["measurements"] = await self._async_retrieve_data_from_tempfile(
+                tmp_file
+            )
             tmp_file.close()
 
             if include_trends:
@@ -440,7 +444,7 @@ class NodeSamba:
                     data["measurements"], measurements_to_use
                 )
 
-            if not data["measurements"]:
+            if data["measurements"]:
                 break
 
         return data
