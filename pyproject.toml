@@ -45,7 +45,7 @@ ignore_missing_imports = true
 
 [tool.poetry]
 name = "pyairvisual"
-version = "2022.12.1"
+version = "2023.08.0"
 description = "A simple API for AirVisual air quality data"
 readme = "README.md"
 authors = ["Aaron Bach <bachya1208@gmail.com>"]
