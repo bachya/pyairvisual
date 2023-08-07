@@ -417,7 +417,7 @@ class NodeSamba:
             NodeProError: Raised when no history files are found.
         """
         history_files = await self._async_get_history_files()
-        history_files.sort(key=lambda file: file.filename)
+        history_files.sort(key=lambda file: file.filename, reverse=True)
 
         if not history_files:
             raise NodeProError(
@@ -426,18 +426,26 @@ class NodeSamba:
 
         data: dict[str, Any] = {}
 
-        tmp_file = tempfile.NamedTemporaryFile()  # pylint: disable=consider-using-with
-        await self._async_store_filepath_in_tempfile(
-            f"/{history_files[-1].filename}", tmp_file
-        )
-        tmp_file.seek(0)
-        data["measurements"] = await self._async_retrieve_data_from_tempfile(tmp_file)
-        tmp_file.close()
-
-        if include_trends:
-            data["trends"] = _calculate_trends(
-                data["measurements"], measurements_to_use
+        for history_file in history_files:
+            tmp_file = (
+                tempfile.NamedTemporaryFile()  # pylint: disable=consider-using-with
             )
+            await self._async_store_filepath_in_tempfile(
+                f"/{history_file.filename}", tmp_file
+            )
+            tmp_file.seek(0)
+            data["measurements"] = await self._async_retrieve_data_from_tempfile(
+                tmp_file
+            )
+            tmp_file.close()
+
+            if include_trends:
+                data["trends"] = _calculate_trends(
+                    data["measurements"], measurements_to_use
+                )
+
+            if data["measurements"]:
+                break
 
         return data
 
