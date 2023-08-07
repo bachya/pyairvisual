@@ -65,6 +65,7 @@ classifiers = [
 [tool.poetry.dependencies]
 aiohttp = ">=3.8.0"
 numpy = ">=1.22.0"
+pygments = ">=2.15.0"
 pysmb = "^1.2.6"
 python = "^3.9.0"
 
