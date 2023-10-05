@@ -252,7 +252,7 @@ class NodeSamba:
         ...
 
     @overload
-    async def _execute_samba_operation(
+    async def _execute_samba_operation(  # pylint: disable=too-many-arguments
         self,
         pysmb_func: Callable[[str, str], list[smb.base.SharedFile]],
         service: str,  # noqa: F841
