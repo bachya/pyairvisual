@@ -155,9 +155,7 @@ def setup_samba_connection_fixture(  # pylint: disable=too-many-arguments
         "smb.SMBConnection.SMBConnection.listPath", mock_pysmb_list_path
     ), patch(
         "smb.SMBConnection.SMBConnection.retrieveFile", mock_pysmb_retrieve_file
-    ), patch(
-        "smb.SMBConnection.SMBConnection.close", mock_pysmb_close
-    ), patch(
+    ), patch("smb.SMBConnection.SMBConnection.close", mock_pysmb_close), patch(
         "builtins.open", mock_open_function
     ):
         yield
