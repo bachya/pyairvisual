@@ -12,7 +12,8 @@ from tests.common import TEST_NODE_IP_ADDRESS, TEST_NODE_PASSWORD
 
 @pytest.mark.asyncio
 async def test_duplicate_connection(
-    caplog: Mock, setup_samba_connection: Generator  # noqa: F841
+    caplog: Mock,
+    setup_samba_connection: Generator,  # noqa: F841
 ) -> None:
     """Test attempting to connect after we're already connected.
 
@@ -32,7 +33,8 @@ async def test_duplicate_connection(
 
 @pytest.mark.asyncio
 async def test_duplicate_disconnection(
-    caplog: Mock, setup_samba_connection: Generator  # noqa: F841
+    caplog: Mock,
+    setup_samba_connection: Generator,  # noqa: F841
 ) -> None:
     """Test attempting to disconnect after we're already disconnected.
 
