@@ -219,7 +219,7 @@ Thanks to all of [our contributors][contributors] so far!
 [airvisual-api]: https://www.airvisual.com/user/api
 [airvisual-pro]: https://www.airvisual.com/air-quality-monitor
 [airvisual-samba-instructions]: https://support.airvisual.com/en/articles/3029331-download-the-airvisual-node-pro-s-data-using-samba
-[ci-badge]: https://github.com/bachya/pyairvisual/workflows/CI/badge.svg
+[ci-badge]: https://img.shields.io/github/actions/workflow/status/bachya/pyairvisual/test.yml
 [ci]: https://github.com/bachya/pyairvisual/actions
 [codecov-badge]: https://codecov.io/gh/bachya/pyairvisual/branch/dev/graph/badge.svg
 [codecov]: https://codecov.io/gh/bachya/pyairvisual
