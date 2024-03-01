@@ -1,4 +1,5 @@
 """Define tests for API requests and responses."""
+
 import json
 
 import aiohttp

@@ -1,4 +1,5 @@
 """Run an example against the AirVisual cloud API."""
+
 import asyncio
 import logging
 

@@ -1,4 +1,5 @@
 """Define an object to retrieve air quality info."""
+
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
