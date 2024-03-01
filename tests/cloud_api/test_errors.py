@@ -1,4 +1,5 @@
 """Define tests for API errors."""
+
 import json
 from unittest.mock import Mock
 

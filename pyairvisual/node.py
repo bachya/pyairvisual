@@ -1,4 +1,5 @@
 """Define objects to interact with an AirVisual Node/Pro."""
+
 from __future__ import annotations
 
 import asyncio
@@ -228,8 +229,7 @@ class NodeSamba:
     @overload
     async def _execute_samba_operation(
         self, pysmb_func: Callable[..., list[dict[str, Any]]]
-    ) -> list[dict[str, Any]]:
-        ...
+    ) -> list[dict[str, Any]]: ...
 
     @overload
     async def _execute_samba_operation(
@@ -238,8 +238,7 @@ class NodeSamba:
         ip_or_hostname: str,
         *,
         timeout: int = DEFAULT_CONNECT_TIMEOUT,
-    ) -> bool:
-        ...
+    ) -> bool: ...
 
     @overload
     async def _execute_samba_operation(
@@ -248,8 +247,7 @@ class NodeSamba:
         service: str,  # noqa: F841
         filepath: str,
         file_obj: IO[bytes],  # noqa: F841
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     async def _execute_samba_operation(  # pylint: disable=too-many-arguments
@@ -260,8 +258,7 @@ class NodeSamba:
         *,
         pattern: str | None = None,  # noqa: F841
         search: str | None = None,  # noqa: F841
-    ) -> list[smb.base.SharedFile]:
-        ...
+    ) -> list[smb.base.SharedFile]: ...
 
     async def _execute_samba_operation(
         self,

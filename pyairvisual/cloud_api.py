@@ -1,4 +1,5 @@
 """Define a client to interact with the AirVisual Cloud API."""
+
 from __future__ import annotations
 
 from json.decoder import JSONDecodeError

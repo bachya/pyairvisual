@@ -1,4 +1,5 @@
 """Define dynamic test fixtures."""
+
 import pytest
 
 from tests.common import load_fixture

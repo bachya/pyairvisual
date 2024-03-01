@@ -1,4 +1,5 @@
 """Define tests for Node errors."""
+
 # pylint: disable=unused-argument
 from collections.abc import Generator
 from unittest.mock import Mock

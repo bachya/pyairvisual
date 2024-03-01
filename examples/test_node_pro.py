@@ -1,4 +1,5 @@
 """Run an example against an AirVisual Node/Pro."""
+
 import asyncio
 import logging
 

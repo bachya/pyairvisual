@@ -1,4 +1,5 @@
 """Define tests for Node errors."""
+
 # pylint: disable=unused-argument
 import logging
 from collections.abc import Generator

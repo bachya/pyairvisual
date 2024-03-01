@@ -1,4 +1,5 @@
 """Define a series of endpoints for what locations are supported."""
+
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
