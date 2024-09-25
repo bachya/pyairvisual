@@ -128,7 +128,7 @@ def node_measurements_response_fixture(node_measurements_file: Mock) -> str:
 
 
 @pytest.fixture(name="setup_samba_connection")
-def setup_samba_connection_fixture(  # pylint: disable=too-many-arguments
+def setup_samba_connection_fixture(  # pylint: disable=too-many-arguments, too-many-positional-arguments
     mock_history_file: Mock,
     mock_measurements_file: Mock,
     mock_open_function: Mock,
